@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>inittab加入自动启动格式</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+}
+	
+
+</script>
+<style type="text/css">
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">inittab加入自动启动格式</h1>
+		<span class="tpl_e_date">2020-09-03 17:08:03</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">zOa-6LkCCct_p97KGpM__82gMN7TlBGZecdhw3jyFMDHANHsxZSW2SQL_wqlhVxz3j0_JpB5XVrt7MEiEUXRkGyw9pOqPuaSTX-b9eb_hRdhUqQITIw879p20SudJ-17q1gA0VzH1GAxgEMNTdDEQBLPqnogomwbrk8CujWSmSGmImWq4WmqZW-PvvCQjusf8OyUMnC6McnoZol1MG0WdebvA5yItQkoe8vP1IFyVE6KFj7xyfhLEG-kvM4HaYcd2oiGayo0roGcbR2qnjgtdhjOik8HSLpOh4sjAZm4lneHEGabAKrUs09ZxkT3kavfj5KvTpe2qYHz_QQCz5_OYUQB8lc-1G1dmPQ4yFDjQHGolYUFZbd_6AsJSIggHg8jczoOs7objEcmL1-rDfOt0pirNo5ZKmuXg-d-Ta32wfwThbSzMkCl_iSXraj9MuRpwgYA5_EiAxYlkrvBo_zeveBOTDFLBEyP3XcwF-Iktiv_58l0SLGBWxD9YYHdVtfWRuMRtU9oOgyfrKbtty4AS1SxNdzaHnbZoZpUXdNDEdC-a-dx5bJaBufHFZf-L5viFT3mnpQoHEdPWWIn3Skmw1_GZRokCEi4IleajJLvDwaBK8E7gEC2S0yu7bRWNHP4xfQmCacCkY8qLUi3HZCgFSahszdnvW4v9tLf0iSl3sgQI2QKMB8WWf4kIa3npV_6hl1nqezEKqTJc3c3iMtTzg</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
