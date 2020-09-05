@@ -70,20 +70,23 @@ function decrypt(){
                 alert("解密失败");
 		setCookie("password","",cookieDays);
                 return false;
-        }        
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
 	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
 
 }
 	
 
 </script>
 <style type="text/css">
+#encryptedContentArea{display:none;}
 </style>
 </head>
 <body onload="decrypt()">
 	<div class="tpl_e_header">
 		<h1 class="tpl_e_title">C++ 面向对象基本释义</h1>
-		<span class="tpl_e_date">2020-09-02 22:07:46</span>
+		<span class="tpl_e_date">2020-09-05 14:52:27</span>
 	</div>
 	<hr/>
 	<!--{content_separator}--><div id="encryptedContentArea">BSuybLrlUTcSB19LNUvuNBA0SbDPzx0zXI1RdOCe8hwAP6EmhdT7TV4wxDTMCjmRPN3Bj2kp8i0PGAMBLVAQFb16dh-t5Pb8MVNNvIc5248R55CPIcxPZfNocs4FhaJPyDXaJUdbIzXC6No0ONeZHBh9Ky9H8vPY66F_tYDPvHkwqi8G0F5u4TB0JrbR5N_rQFIFF5DxcPzqLmGbIebYUCiVQ2uT_mLumhNoHWpRDSsu9a7jaHJGVPXpkiKmn0feXfo_Y9WViypGqc3IUt1KnDY9YQwKy5Zi1THO0z4a_SgItqOa9Rn7Ij75qkb4HVJBu9llqVxBizXtio6llJlfRz81vjAzVf9Q1bVIYw1Mrbtb7NXj4iVza4Yk2xaSHhYmq99vuNmIvkes-6e16gYGJXvFQSArnXVJ7ibNKm2wTjyoSnh_tRBjR5oIxEpln5mxZ2R_i4c7O5T7vUVVDimbtugoO0yGIJaHEn5bIXHX9OpCAzjh3Llt-aGFnDUXkX5aA4VPR_ZWJQoimwYsi-0sEAtTwVZ_TEwYnjWY9LH5rE__PFZAqYXFa8-I0xVNozwRKqfCPbEQLJOnzUpK3aMoMDhsPjL-rJxbTu7ZMTezaDHI9TR1i7MhVzhOUuJW5rAkTtSLw0zGcCrfkIxs3Kt47TYyMhWZUwCHDVm2XrEAwXTeAK24LvbIj2WdGp0wKlaoWgw-icgmqwAzRMFp9RKD-468t-aC0YBcUQW_OqkFTpUV6Q11RLaSB1cFyi2L0TNoWy_Jv0czWeozT95Glq86YVZL2l_qB5HbHhT6LB_bKjRWYCrmCwMMgpC_mzVzFzAbkR1OtCfYcxVpLYci49hv_qgm_QOuX1b9rd1ZepJQuCvYXbvy8QI7oDMe9WnxR56cKo_5gzYYky8szzlt4S68_uuxxB4jWCy7Mvcn90nOyakUtfpaI_CF-8DfHQjsZNTsFI_HFYwKdwE1JPg3UPG5cgQk6Z7a38z-1cmona2gkPmWxNKPRrtDimEjvT-D4_fOk23SW_GHHF6JT1BlanXEL1pwYvKviIclsilB1buORYPH9ArGcED_ognzE09fW61b6jG-WXKvxYxQQOoGfZTxgReZVa_hTu5cZwuvu8gzFAjsUla6j6OmIfaAELs7QmkzMfOI5Xy3tVjojXvCWiVMhHEEGUEGYG5Tq0pQ8-PqKvZsBE2A3rlrSWVeM8H-S1lEhW2B2Jo_9gV_DJYd3PaCh8Le9C04zTBgcE1ODLrbGEGNynTLAz9mpy0PrBACws3fOD_meQRXgWmcjK0X265lwjo2QujY8tx5VJ2K8rvnPVEsqPFbZbLOTw3UFwg4CZJkMOrwuYndSguHyqQaRAjDSgsVVlVY7QMoowSna_YWL5ru2GUojy67v2LevRa_XLOt0FYeDOYlGbxZ4v-YZkb2clZ6ucMcMfWnfUEf16aRWXBjRCXSPJO-mJgHicfdeSF7KfZDUfjB4YIfRhNmDPhq0VW8zKpP17PTNifI0D5d2wWvLdJr5702GFuN8TnVA3TM8TvSVvpZzCd9OJO3uE77JrX73QdISDgTWlwx3UH5BkkAHNKg61o3krjJ7ly0h__j2mXc53NPDDHiJH_Dfc7q-R0JteejEgrEEi0tWpcuXncnH309P6kLBSXy0N-pf_yqeTdmZp9NbZOHfwVi-mZylFg_YuE6T9ucaY_l3yZMxiTL4NJAx6LBJhcM-5bZYpOoPrrmNimSFjtbpAAp_AjE6WMvpndkOj1DlODiwkGRJIljAJBGX9ABs3hLZx51qbxeaBOTZu4rIbc3gOaKccq10wSKhSKDEKv2f2pDIG-cm0DDwfmqWVU--UGmIw7MFqPfZ4Kj4CVY0qtf5Cw77o-2n3HMHuFj7IPo89RgkZXCxy5LG4OOduoLRiD1OUVNN1ctGq1bhPN95J4YVs-_FOpCNcH0MUgkr0w5Ff63Hib-TCKCzm1mmZNd-Lbbtl0kLizPtoF95g2tvp8NNLndUAuD_zfOT3NysbGa-z0gP6H3f0sOYABtjvmKEc37bhx3GcnGSrQmQlVt37ncoL5fTV8bhy7e2XsEjlx-1Y_PH6yf6DuofFT3wf4SsHpSiloX6gcWK9QlClcJL9TE4cQjSYpS8XEcKfmze23l7y-P9AcSbAU-r6UraQ22xuUHjtHZeCttK-R-Swwd-H_-TVdlCl8ZnkI_U175gUMkExuT1VlP_rdifmsxAvqblWnZTpRGpZxUf7d6Kgcc8R2-ncWTpH-M534qPAJetFHNc1M96prmEHetWbuMWXdb1QW6gEJNaSls</div><!--{content_separator}-->
