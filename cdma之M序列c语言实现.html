@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>cdma之M序列c语言实现</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">cdma之M序列c语言实现</h1>
+		<span class="tpl_e_date">2020-09-16 15:59:48</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">bGGzwPCLG5y8HJHYSnzqb9DJMc6XXwbNAo0oZXRdRsjIlllUNqd53B9xjyo_70747y9I2Azc07sVZhVzJLtUgnDuc743IouHxp7r2912ddici941ljnz17F3tecqvkWokhOjlEBLW4ug4k9M8iVURC_QDCRMNvydnY-sidHcPDF_-tIBqIy0QY8cuUmmbHqqUPeOiul-g5z1umVvSn8vwOFAcRBfkajPIpXy7Z4PfOQlA3wcxPwouRtKcRhqFAo8Kfkoib8gMPlLWg4YunHXm2AgFtrjk7s-xWS8ud9MfuRKx6LRBpPVnnE8nEwOI1ObSFXin8wvLsFzOgTqSUu86UoJ-wp9HP3NC63MnV4Jmhp8xRIv2WJwLi2zvMYkEeAEBx-PFx1cc4asl8OzM5mOvtEoBuaYGeyCJ3v9cfu48uSiYnpFzfwjyDqxpdrfCjY0Ctl0h4bByXokWaSPTAEddYwm_Aylfir1SgS2fbBAdQzNkErcSACr1wk_9l5Xfkx129U1bsPXU9NFRpFt23ereHh8J4MJeJuepITMiNHQH3r6A011Y1tppfZUFkfQsnYHKLFDRAsg3uGViHsMBIOKPkWSL9DrsLM70tboX_3HXuVvE7Uqv-DWRo1JuCIBBJdqo6K1rDz7MU4GlHh2HVNe-W-TV02slg-_wzRFDS2XRxpVEFUSmec_O_n0paUBMxus5LicxrCA1KYKLd68t2RWFcdp18pjMjGACs6_mDVE6xYFQSK9NGhjXs-GimX6__vXCjL-Jm4sWGZPX4RMMI_LzqBqenU68Qi4WDi2STGK_MafYYOXdo1c4RExUdqQtjwt86ESACwwijcgPHonWMFyBFmQ-0nayqoHij1WwEraucJAkHA14gv1dEMY95bHzobo2BHIrDaB-CiFW8PCdIbiN71T-GiziEiBDnhRLxZCvdfKkEJkM3nGgwL-ux69yDjVyb-MLAMLkR9rKwPgMwa6Xhns8bU9JqpAC0GAEaaei6e4QieScCzz5DG-0TdjP1D95dbKvrNqlO7zfCgRNPaNmobNiYvUAWFQi-ydfd-J8TnRh1BHZPAW_AfBFAVDKps2jVQ0O_Ecz_uIIxBxjwymMP0TC_-eKmDmiMiipfuG8BDEngjBfqAGCpQPqoAEMHVe27Ywx_Q2z03NWSfpkALsPwdr6UgXEYjVZ1FzpqU69UojRo_k9XT-_fia01JD7EdXmku_etB8HEebTuMRnV0WTfLrihhvuFQwLQesAwuomUkuyxp8KDm2AE7GJ8xU658jqluAWZXFwkMoMarR4GePUE6SuloZMRlhim0xWqTI7VhmH2Dwy2UJ_d9xVkzmpM8y8SQ9db8xGQQRVFrWFHJKiJ1gRPueQlPogqRwTWVR6v8OW8qo2-iCQkY2rr6ADPb-946xRKtYbmgMIOG5hpDhzVFz6vVmw_WSrlgUApSmTXNgYbVm4ifxhHH-KcLk2XYlVJ-Kt34c3NAW7am3a8lbLghXkcNVw5ANRXvIJKOp_UE5TjJ0ADhjvxAOwpGELCEfTogDyZ0CTGZXULrf48BFhtJ0_jdj8eJuH0bNaWTSMVn582EVkz7D_BiXuRdqmEQ95XroWjGlkq6XUGqqUVx5y0CLPXDQe_zjeJiAnup213GUDI7BH90XypY6axne2XzU54FKsxvDJ_TXHYxbOc_etHvMCpZAXeo8eJxn37Qqo8CtLknHY5pW6sXC61u7i1wwT5BJ6Zq1hFgQDg6NmCSTyEEtvqfMcym0X4MkqYtvV1HJ4YuKW8-lYWufZV5KCjxTLXyQG6ynEc7k5B8_2y9x_BaYsgkzT-RjIZqthCXxBuA4Feg7yIp32bnlL2dbZd370bRHCWrtAKBsFBqsn1fWCbEnw8c4HN0pnJLbXoWTtL2ie74hyp4f9_Ft8JFJZFYebHq5hlYo4i-NqBIRmX5ped1gHNG4lsx3skfPeCXZhlgXbeLJDcWVJ9X877zvPKhwhj1Ufuq11B33hZk7gkBu8sz72KxKeruqJWPjpTyUP1JYx8qJp-KX-etcW8TnFY-UHnA0_fF8op1yt2hlxdykmpKn1xo9XR5U7QD8WNIiHJA21t10uX9SjspgxDUOCqJD6kLXS7jqlaarBvYlEETi14JRKwHIn0nZAQu2SBspenuBfBR0exo6Zs4k_KfmyYIo9i3pBB6LqLkJP__n-nUnrJNbxMYAoOzJWBr_KoZPa2ZIbwHlO2qJCl0MGpRblhXBNfy9GJOtQYpscZr_XU2e8Qez1RId0bkkl32mfAOfyy-kHCnFq34xXQN1vrbOlbWif5kPwfx6JLTb9cxZZ7oK8w</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
