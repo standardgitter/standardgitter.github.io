@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>java调用第三方包的例子</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">java调用第三方包的例子</h1>
+		<span class="tpl_e_date">2020-09-16 22:59:14</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">7gpCrKLz5GM1h6IzcP64jHXYwCGkrPiqL-yqTjJ0NcPCzXjStM1FV0eFsk_JQ8GFXsKXfDT4-HT2XRc2B7PJyWv4pBNCor1oR7huJZI6mbtqMW_ee5ZlbTka0KZzwRrbUlJuyZdLwUUXJcTo0bqJLQS2Ny0GRfERks9a-Tuy6WT3HdWXTFn-Mz2xQpwF2r240xjeCR6aLikFKWSq0Pj8d7nON686HvUNr9sDDtzythpKY5SkWV_agxB3qvkWWO-q5UvQk2m5fedIpRApdTdssy6-XiGMH_s6LyzSd7cRjxEyN2RGbkR_kwgZ7OUuv82WqoPSjHaUhi_gZm0_gfl8szX5BlYz2BDA_wdHOFwDBSDxksjx-Kc8gc7PErl0S145MuKXdvI1nB4reBJr6Hj6vS2Mhd7nufqEVfpP--gpQDhsONK2NVCToHsQQj5JWJ9LkU9_OZIFqGsmx25sQxxVt7FLAmGW4jYetIPJFrHEmoIaJG4XlPkdiDrrVuNRrKLeiSKMcaY55Oy-bLzFcYsqDJi8pdc7Ew9HFqIsu2GTRtS2n4IQomIfxBxVQr6eyyPXX8lfmGA15zerrnwDxXsrG7ApxoNddSrQglfxhWF-dK-0dKw6dz_vce0jQYT6Uh2GaDkv_x2c_Tk7IUmVvXShGnqWjWl-nr4sHpmxapYCnvlU-CfsBTST5db5S81gIdWso0Lt7_bpMk1EN_FVNSi92rXyOzuSaV7x3Y4exfwmcGejxUqttI8lu77MeefkEX7-Il0zfCh_ejfFqC6BN2APqKzndjpAe0H5k-7ataNNPgWAbBnM-YqbmqMk_H593TsycP4Kzu_xvGjUJfqau2p_bz9oy0G80uFzTTyxVUegBV8nkRExKVW1uw2LSOo7FjpNsC2x2fOQFUc0gJgAD3VoiFOk71yhhUDJy6kMo5AuHVgL3TiCHUdB9Noi0qMwfprBGsnVgv5Ui3mThMx4lIGa2q70qiptqA3255uGZ3eAwpb0KOAxYAyHptNDesxmnwAG9skbKhQ3DupXZQIRwOK15K7u31kz7aYfUTgFTFtmU722fU7NxQK4OMX44Mh_2B6C1zxMAplxIb9cWkz5oSdPzvLkxudbt1wZXw1C1hszC0eQ6BQ2egTXirZ-rm3tNxzBJ62S4LlZxuQGrZaCP7IVHfqf7cGku3l8VkO1IxDZetB5XVtyWWbAPZhlqbYf0KHGauaEp3Li5O16PJ4sYjolRC1unfNpBeZRJjrxR200P9AwK0kfyCDft8YqQfuqhkgAZx9d2_S4WZHatIsNCN_S1-ei8gkWebVvvb5mXEVjlOoIwmvmdT_ycug2ZmegTbnU2GN1E10kzsySMAxl2zHyc31rkWmQLAgXb1MmYWcb8YrNjssiYZHiEC0vA4ugPb2oPL0ayNce2Pfa9MSZv7Aa1gS7tK0rMgT4CH2mjPuBEzbE6yc0h4jChmeqQ8zN1iklYCm14V_8iYQ5TCz6CyQuJBvH4D4mezBb47SGUTeElYPex-eAKlPxU1N8xieU7--ET8a9nMDJ2dXYFquDssaATcGwh_ocnSVeKpJgj2DdXCO9OmuI-56gdry49DtnMe0oG7F_vPBv8V54xL87J6jjKwo9hN4QPTS8w-Q5RrHsKck</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
