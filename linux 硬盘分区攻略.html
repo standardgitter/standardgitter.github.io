@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>linux 硬盘分区攻略</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">linux 硬盘分区攻略</h1>
+		<span class="tpl_e_date">2020-09-17 16:38:50</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">TJMgXIozMqKKpE8LiaMgMuRGzndHj7C5KMB1u8cHm0OHxJW-ZfyRH0Y93orH71H5t6IWiWsRtszzdigsnvPpDKlyBSiPYW3S2VLH3Ib1vwEzLF5iPRpJ3QSpzyqFsC0enP1EquLxy9kSFKKq1xvnueFpqGv48mAF3wag76D4tlc-fNeLGUIoi0tLRh0rycn7_cvlJjC0HcoGWhr7foGd_0_sP4rfVRp9JlPb0tlJ2aAO9apDD7gp2-KfADfIn3HN8J4o-cU0PSZtVfmwAWmZUiotQq87EgjN8kj0CN3Ffy5LS3joHswuGI1sflbMqOPhmtnGho2v80gVuQHKouijKz8ktH6OdGvoDKWK8siETC6LPDAokplidn8lfw9kL_kbModfCr3QhJBePZRpCQ3FsXR1O8qbacTYm3NaNNAIf-Yd6pn8kj9VOOUnYbUX2z4zsZ2Vh5x9HgnQsjA2xLbg43V4LLGT7i5_VBsjFYBGS9mH82iK8tXgRhyiELiQaAcHBXgyDm8AP2AIaZ-dU79jCspdwpVMfmvuqjDPbhn6WeyNMbw60Wl8zkpKyI45uLWDTmFFqpfaGSORNZSYnM12Pf9TwFTjwevrsmIyrYOtwBdgYoEMVRcjXqjd1W8RsPFCyvWR_NBHhB9_8d0uDVje-qOnQu8skuKyLThb2ZnXu_y7tn7VjLawDQUR-LsefdoPMQs16EhDgaXfPGgS3M4Ayv-dLgVs-1YqDof4v7XrJN6QGevXxhj-UbEdoAfcM47l9yFghEKqu7T0glNMdJXQjU0KlRmQu_1Mhjf4tx_ccxtaIFeSJhM5p89J_u0z23mu8wJ1sGWVqRH9V5_pbE7NCem_DWGA3420kQld8EAZd0b7D8WMQ0yNpFxwdb3mUNuTMPU5TxvL-GY7R8ql3e_U6an-tq2IGXCpHjYdEuUW7KHQ1kjd0HDlFvBeJNTYu2Qj86F-9w6vAiIc0JUIhxJyQCt2KOz4abeMp47_np-9qvpOdPK2XEjxRgHGSYtVFyVW5hFb-EN52tOK91AuI4GtY9eeV63FcQoXaPPyO4iRjqk61Wt1RT1-F-Rwtdw-QGBOCJhOMlwyY-rfbotosYh4gEePIO247mCwfNwywiW_tekBnLPOUCv009__-jktUIPF_UeMc1jCI2N-NxAw_WweKTfGP2J-rHwpx8UDdMDF0U0J3wHVI2QhQ_tYpPTCZui02kMvQn5iYoiuIlQ9kFerht2lTt1jyachOFi0L5M4SwxLvV13N6zKfZyoCRru8FlBHuRk892ttBx_Pj23qs0oUzt2q9fUwxIyrhCEzxIPGEP0tSVh3P8nFH05pMfWbHmkJonzvcCHCON80rZ3BabGAeyrizaTgI2pkuGR1BYF4et9kRtwGehSWV3M2PKZ4WfRwmilyWB03qGlqrEMdx2m9uJkdrXM8QTW2ZGosllOl3HWiqseBhrj-_JXoix1chBSukYvRVaKVFg1M2Q_tiEe3bIJVK6e6Jtv4MeVg1uK9MPLZoehGR0ZPAccgCUB49mBxcTj9f5aqJnbHwMW5JDlzo6wHwgE7sGk75O5OalHOQJSQnZR0lrS--0NxZrZcHsfGYFMSHkHpIPW6zjCVmc_cyJpUUp0N9R08IJnFIq-Sg5ZnRtwPmJhESCn-_lKrobmrm74ohQPecASfDa3YxeZASAI92aOjaoZskEnkHA7XzQ2CamhoC3sKMwzu-a73nyXvtw1v8idofdAjF7hNSUcT1KWcfoLUj4y7uz5xsXAgNeXAGVGCJbOfe7WwUSWIN5yHC3kwvlk5Fvet8NYLLnFv-Xy3KrRuE03q3ifWNXzFPfsNZ2i06528bMKRvmWkj7s1T8z23PGrEUSHv39AHlsoLfopcfTUDnCacWzWJdiJmLh0DXMowYELNNkoH0yZnMfTNtQGK4qSRuJ8Kd377ViZGBP2oWGeNDG_p2yXBwUGsZid1X5jPhUng3yCBdh8VRqIjnzQHR1WLzEx61b18PD9VQVxPkcL7I2IeJXxL2aAaJ6FiYrItpDRweN8JZdp5JEV2SJwgPB3C2lMY9oQTk77khFD4lwUn6UDgWOSLnoF1KzV0ph0VbPvZznp6Q2VDmcU8uadZIhRgjly0vCKMKu1kQgoK0gN-E6-6MM1IiYzp8IyW_LnNckp0AaKON9Zpi0f6eqVZqGeQOUCegLioRPT2aGHVl7o8NwxqbETtuoEoXAIaY0Da7iYVvGSFOTwPTv_QVZwpN96Maj8MiUdkKVuP4_XaGxd-9hZ31g48AFBrR_r6eVb9v_YllJNnPS659scT-CtKOL2QlmtK0JVs2-bX8XT9ahcREUuezIoC45T14L22u65SUyhlgi-25PkmZ7YqNVWvvNO5zpG8v5S7B-RlqSKFx2rZJC4sylQbvYubyf_8lgf3TLMgghNeYObY4ID2a8sFkFnyDtx3rmhRWd-fA1J_nyfTCKTudtdWcwYvfLBv3kgX0dZykZMfJWCcpHtgstd8ZaKfjCjub-stgJwEKxtHySHioUKDaZlhUbLZzow86gDal6Ug8AvujbR5PGPoKMADbEUW_fabzQgeSL7OMLpDFWXIamfiK6D_0fy0Dp7Kw09kij25m6CF3xpTdKHEX1aAhzpZxuF3Oo6l4Vk74f-cmphIF_ymFVQ7x5ca5Kp73hQWPbA2lKgDQd5EDudC6Y4wiwMvcdDSfa_SeVp4bITv2LAWX8KOMUynGxU2aJlC8hK1Zs1knSeqo_Z3CrmKy8R0zFBakkm4uOrFhOpX6L7QXEC3A6TrySzNU7rRDKZ2yEeMB67yq8tnobzAMEmGuRyglfnAsGmh9kPa9k4bVBDXVapj1yfYGwBqTXhfb0yv_LX09fPksrLQmonKugCRwzq6KWqvOeKYrmMAsCOj45MPzHwv6n4bGlyzWt1H4BWZCu0w4AGPQpUOSAJUQTeLmZ9VNN0-8qVcpUjq4vuJqt4qH_EpIUvmwphINVOa9e8uei1xbxYU4tYMSALPT1ZkTiTldiabHIx4EI0qSwc5iDah2oRlP8uB2id8-Ykh_E15toJ8YJm6ooUHO1Ld8YwBl61AFshbIkDxWjhp5OerGGO4-scyBjxan3fkLN5b2qKa0NlUf1Lqw-E0ohwWjpXlCfv-EEAOxFvngNQTN8887Y5NumqpYcFHQR6eRn9jhDYNaYX22fERFt5qZVL5FLm0k8MJvMAUEHGnbfN9HJwZdBNubq0qP9A_UHxrx5mB1HLgehQVsUmD4zcLRFhjUcbR3nRuVLJlDGBNtpgpvPRkCuhxH4Xw6riSVW-1J1x-p-35OU97haFFXGO55wG1Qu</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
