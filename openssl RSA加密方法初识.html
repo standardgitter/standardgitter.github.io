@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>openssl RSA加密方法初识</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">openssl RSA加密方法初识</h1>
+		<span class="tpl_e_date">2020-09-17 16:53:33</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">gsLVeWMwxx0tC6wBwQc_1lNQgUSA-HL9IE-iEoLZgwmuRgkCtrifmSnCno7lQdFvb1jeW2iOZ2LFl4Tz-lvRuag70KDMHeL8RbY8rV94w6TqI4owk-n3e_FfFKi4aac3doasY3Fvg4sCQH9Q_rx93IseLIs_giKDr8bZmfhPdoCoQhGc_N3eGIadrGnW9CwAYudwo8R0-rW2wWG1sTRoTOSrVEJRNvEiM4tEfxjwLySI0501pvT8TY0ctToFC4I533Op7Zjqxghw9y5Nlou11Jdqw4s-HYY_1CyGW2WeAMlFFEm-oZcMJ8dzS2iNYThnou4SA4eWJBwNiMsJg89EzPvUsAiYrv39BMBPLNrWJFCNYA6TblLXJvIr0sHQj1sHMNrahF_8pGjb5E6Vo4nh6yn40ckMFmdu-Y4BLpYeZ-sq_sh4K8wHxkOLkR5cGOvn6Yi-2k7GbM7p2Diw7J4HjoywAoGfawuWJNOqQDvOnOLcHAO2Yhaqc1R262aNG2dRLHfedOH1TDloQCYqANAh0dRTSNovNkti2dsuDHR2Jc65wrghZQhPmwf-xrWgiZQMvaL_-re1QgvriXVnbEtO_c-GlJSgeWNFIBl9I7ax0bCtEJ2i-VxdMz03nPbX_WC_RH9FV9jVlfFoj_feyuFs9jeDTS23zp53I8I3wk_KpjpdF7XuKB9d65gZObGMocjzIPAi6eQOQUCQURMYnnhi07Ai2vaADPqYgBtmvtCsLYfFsIQ9aKi2iq2JiCx43KQSD9VoI_TPwAv5QKAOYkYUeMefeeIOnV9eO19d-CU6jA7fZRyG-Ghd1EKoqa2oc2MDxGD_eGsjNn0TIDayXg2OvmFgWxViPym_z0HHMnrkEIEKMn96C3fJJ7pr56UAJFFgsFYPz2ZXXaLtt-mccAosYY60kQRwqz5nAVD2MWE9_-8g4KPUJZUdHJzbABT9ybZKu2iXjQDh20ESvsL1TKryYx8LPXreUoSz96ShbHZcvuzVdB_sNlVb-4iGtnfb6_HnbUsUOXyRJyWvQ9WLEzm4keVPHdcWXLqM2z6DcutrnG771Xjjzh1UaEVGSoRVEG3xuaB9VPYJaRBcI0Xj9Odtq7JganhlguFXxYXj-xdYZYHOeDxo155zRFVq_8Qb0QYX4G1GHjw_AkLcHu7c3mK90dCRBMNAuxM5SZrOymiXRLhzsBdlZlk3O-AHG70QJMmJS0nZ6OLzPtncbz4J_k8LcjQsYLvjBD6uvMS-qOcYY3gTLG0HIp4jYOJBPGi1GS38AU0kN4krAYz6vLlNBVK2NnilYzjuh-v8PNVe6hUgjiNXgVbzPau3jbxxsGDVwMvGo5RevUjO5osc-ij1pFE_lEA-J01nk0-oyYK5FwG0dkOTZv6_nM5Lr5ZYvFOvohNs15gT-8rVs7HEfhO4g-6vmFa-5X_I7gyOvJsRscK0CNryLSfwS3MwT0u5uWu8COpfnLSPvst9nRmDq2RUGeVB_qlmhiYizo6bdpIbqE6EeS2-7fqMHSzlkLi4kLfNXnfL0o2M4B2DEABB7K91Y2l8xNA6CsBkwgKt3bPLxjYenYTEPqrb6CDaYMQ4CuDtAU_0z8HDrsw0SOe1WjlNNzpruhwd3gKgmo9xQ8vtE8f6iK3Nivgfi2vy3yz4lYlOLjzIacSGZ6fXlAE5P5TJiONx8Nh-CIeRg2d_nSiVFMSZ39Ca0RMsRZbA0Nxx1Y_ORFYjVQViFmsGxc8ZF6HJy7u8rXZgTCgMkFCYsJLbt6nqCMgJubE14nFzaJXnof3KEu99YPPbMaIMZCgLiqpI5RNgUkejT8I0Sd28zhSN2-Y_pRc07pRnk4tr0ghCNVJ3iE_mQscBoVXWiRV8uvtr5EoJtcW9pskWgPYqXEAAUEdAaeUA3XwbY3lPSFnAVi4Jw9xEQJ4ZT98ELM2WqPSwVtQrgotakLSc5r9AR2B0dJID5Ahnzc6z_VRG3iImaTSyZrpGJ2dpG-BaESemCuBXiwGhUzbLgUbGLQ8ePRizuf6q5cvc9SGlu161AbscY_DDfHmJG4c6xueXl-j5AgNYotpgOsrSJrL8x8pWsfxtdu9PZzCX6zSWejXW8fgp5lKf_MdvM0l_tlTAn7n2Bjoq2ZshqJPwZYenKdzdwCKi45B05wv2g3xAZKmQW73fws6kKTpWwkmGbywaGBVSz3FwBOcY_ZcOdoFDOawGX4Pyn-LvQab-IWJqh7XTyW2gg_h0XC-23uDWmuWzafxzSAo1MpPx3HgCNl_mqT3onn8EGFAtvfjBrYb-l9M7KLs25B6mRHl6FweMbr9h-Xzt41ncLM7V6BpCE1o_gCl4z_uPY6zmLaYEliAjUKvC5aNeOgEI0-BGVG7e3uZl2S4Rx-3FmvBu7LOVnTlqBTPdxq5iEdvkjj8dUid3qlp1zaW0GxlG6ajnz7sY3enqefM5PtS-8caDemovWljXPQD5BIGRz3RI9cef-zWflSi-tNvM4QyNP5BCXzdHFvkB1u9Vc_owCfw11Zyby7C4KorWh9ifmgL4z4-WFcl5x15uQWYYn3fRHPNoEzrxBubp1J70K0GPqCf6-L-R1Vkm0fOfVq_JgfqRfWPrDKJvJD8AdgFyJkQuOZtVKJK371F6u5QH3r2nCr-nxQd2tft6sshyVh_weki86dzZpFpLOoaiASyqoStDyPv5DR1XtV6gy0xetXuBakifYU04cNk4sUg3lQmIYk_qAyiTvhJATLNHypSlwWgUwVzipPbUrMWjqlxNAvb2-2EHvTccNGQC5S6FRbCctTxDXwdnSMVsR1uUDnjBezaZNl_3BjL6YwoX9CizikC02pRe5Q</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
