@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>oracle ocilib初体验</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">oracle ocilib初体验</h1>
+		<span class="tpl_e_date">2020-09-17 16:49:32</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">FvlLyPF0Dbdg_iN0M5ue9bRX29yDXjlM1-lBOkCg-n2OOsFn3677YBm3UM3-TVDtf3liHUi5txcxCVFuAtqfjCW5D0pPv6dpc4dzuuUjbXqrxbIv0hJm4RwufSGyJ1LGQl3Saa-waEq5uPVpsm5HYkltW120Pl8aW1sBYWE-cciiyZNI8s_Dgqu0dlmpOK_bvLrVKD_I2E2cjAzkZ9_bI-npmJfFgZ_pht9DjTOzaFUbFhFoZZcRY8trkLx68hzP2MOaREeYDGYoAn-mW0eEaoTGYNXY8LJP01KAYTCL3lLSlGkZ-ypCuWDZJSsB4CGncEeGtuRCXVErNAVHXH97k0zhIMEqH_FANUBVEMyAR-THBqwJ9v2kTS-agwoUXT5VAAyLhiKcvTC88CzlObxiXcjt-ve-qvAHV4pa_q1J9_-TFqZDItSwlgQ5PvTUjkrwtU9OwgOUxSvsxqplD3kxotxRVuBG_Mh99SfjE1TW0HQjf7wrPx8zGpFlp9gtFcStz3N6DWCK5KxriJnW1AudwJ7PXviySx5WkzNOgXXvV_Vcjbz8MHxPjUvgbvDlTwOeaeeUf_FHgapsphxx_yg6jYAkLZQOKvrFm8-jey8AVgfcOI1K-mOQP7n0MzXdIvDQORzqzpEbr_Yq8XGnQEOvuGSV0eyu8-hLInO0_O1iD0uvSB6G0PJUqtJdHm7wdB1hfYCl7XShEtCsWKBjQCXYMqtUCeB6WUoYLHnjcwokgRgf6HBnTNNDR2L3EWIzFMr9L7L2WdeNs9iaEqW_id8YqrInYRsirBFjQBclh5brnBh4LwR_bGVClxtEGD3J7R-y2eMt9Iq88QnFbZajgAds11Dw9MhugjP7mFU7UlSHFea9-SXwDs5k_cFhAM31zdfPPMYFc7QQY8YizlRNiaZZxejR8apbaW4Akz6BUo0Nu285um-08SUu1yHD7uI6bjcxyCqyTSHgzNIRM1pyr-HxhD-IDk8nFuT9KviJ3nPRg2ziIJ8o9N8QZhaZBNzX_wtF0iY5bZz1kLweKI8A3vmIFETdgWEHAAqSBzmTmEBvr9xKVir2qO76vrUzrqBOVqyunpVtUBU-2aq1Fp8zk3afJ3Mf8PV2hekN5LCQeJzMo84AfOeIOwwljBDLtD7NWla4t1vTq8vqiP-9jyjtyoB-RLnt6WVz-CNPX-4hp57cJHE9GXFQH48ou50gNGDSGp5ZZFC50Psg1AN4AG7hurdvCbQozyMp4pO7sRu4iefigGFVOKDeBY9b0sUS4li8ghF2Js5v5T2xkWrJ1tUFyi9mkqrAmOVU1YcxnRc9q1qUyUD7WtfwtrV6NKFdG-kIPpa63G26PngElo_DAdC2np9boc4qXc7K8bh57Y9-HobTP_oI1QjjTyc_84TASLnrFWPkVfEPux3NK5CG5f27I1vHd6rafaQ6DzB2PXnUCOrBWslsAglbsrZUk9jy_qC5L5pDorrL9_oAOOtaYfSvku1NKYjbrwmSc6lTqDUcP6kuiquvyMd5WGazIRCQGFix1I1YsBX6OAO51d0JQc81tCA5DwXDiJMnEcyP0yNHvKexArtNLKGHKkhMJ30oARISAfqjP13AU6ifCHjK9NFr8VTOm79vkAh--xJVyv0i_OFklNPpnEULZpZzCoQf7i0RMNZXutNOBfZZv6fUJlyN1ziAa_3lJx8UTNu0KApSH7_tAjZhuFt0t54O8YXDFdp-m_r2tuJoQ6HxSkjV-0keZFiGeuHib-Y2hktfpEKJGGpC8vw680CKpdNUUE6Mm9hf_nhreaVWKN5LUFBIWO-K0zMSQayB8evFnIASyHg6RxTbCFUWhraLqY5RPT9pDYhHj-o0N2KcYjGNlaWIyds5l6XgBRBEKkiNNKcmwlcUxG1FbFTIBdU7YVO3q10PaTO3JhKEOV4rjJnhH3VDSSg_YTFjXjGE2As1e6q5-RsX19uazYUcvlZ8yfsWsclcidIaQizim1UYt545BhLqG2helOsTw5jrTuOuP4WiJh5updJoD02OKQIXOguQdOUw4Gns3qCPENBgAX57FZpnuHVfdAf5Uaxvs7OQTvhcx7UkDzw21sQF-_lQ1wMs6qT5X3x_kZYOSKbdW8SbkmaO26Z_1_KNT97gdKHQrl6kWh0d1oUgj1ymN1-690Kd0nHNXvGxqnKTE27y5BYS0f93419K5xnDpOZpYRT6hFu3UqVaQ2HxCooaoUFrc1ecYmfM3FHOHBjbhyaWTkWB2ULx3G1C-sNvRtWfePMaAMPHPO_1ffwQ4U7azkh7YCJRJCOyUICaM_38MujySVAn8qYk3kFSTOhyr0OGCh1ucrkmtl5IbczjaLGeuVT1Hcn1Jw8aRiW96M2d9rb4-ZWAOaersSdy2P7bDFZ-4JJiJZcvmugDOh2609WNeOO92ab1peuDU_c7db0TCwYJMWIV338ie61kb1i-dzk_6lQxfcnzofM8qIfAuA8sRrgkWF6O3Ee2ev_57z20X1OO0bvIT2freu83J9gCRrri74nMMg6cRZao1_Vpirb3fBakpxTBPBbLVSbbu6JKT7AiQZYUO2htcdqk2eBJvgn9BGLeP1n82blvIOtgYvbPHsp_JnyZn9ogo5h7IWMk</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
