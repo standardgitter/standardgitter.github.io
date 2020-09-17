@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>oracle银行卡卡号计算函数</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">oracle银行卡卡号计算函数</h1>
+		<span class="tpl_e_date">2020-09-17 17:08:09</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">gO7OpC3BULtNw05b2H5wJ4SLz8iTX9iVWnbwuMS9nDn9A2vIISRzlnhciCzsIdfUoKxINteZYXVhGIHpq2MpiThwfV_vpCAN4Eef1F5uAsgFgsWQmgE18pHcwLdqoZtAo9zAg2DgE-DPkC4HKAYfPLVw9U-KKZE_fjKeh6ba1HzOZJuQ3i-u6AJU2vCNrPcb2WQqZJYV4CMQ0CCv1Cn0EksQsPCMV68RU0_LWGboc0QvNytNwrrqH4Ya8KrsolGppTMf-A5bFS4thJussEvkYVdzESq8kNr2ZJOWhSf7QR1H1hr5oavO1srPtlzTnAMTJEFNZ-m3IeYYYoDVRMmQPG1-xam-OjwYiH_XJqUsTbB8rE8EudmTzbZb7EAHO1AmHLAnNvkY9cschioqMA1yXThJoOVwSNgzRqUL2jAcsi3uMOi4bisOJVKTkJ8JWmJOTvOIjCHOg1qQFVMlGT1yx82L6W1F9nmF3vPj22iNv-vKcC6wBYi_Mt70h8Hjad-0aE-ZcPdJN609blk8IgE_Q3jsMV_ARxN7YUktrJMDWivRZie-CwUgmGJxrSawD8r_SZeB3wjUUpOSABlwZcQffmnEtt4PP3met2EoHL3tvVecEmP00MWyyRxPWzfEFspQW-DeAhwxb1h10azBcc0Y_sE5yCWctDnXqhFAy2cSh6cVoqYoge1vu9jCdmUDyfAN5-evBw-pPvQHIGi-Dr0MXYa4uXIm1MHapVcq_CBNf_HA-lwzq7fgzDs3XMi-PSi3Ky2MsnbWu_9lW6Gxjiz7LCbY7uk-BoFUGZT57xFR0ZZRepUHrmkqVzuiBGfNcOAlBZQ6TW9cCMLxp3c44-f_Al9aCdrw3ZcaF8tG-_ooJThPcjt3iMVTNE3OR9bxLupEy56ZWSlhKXVjMXgcPV02EzTmwFDOHmc48_O5jmWIi5Fchxm7fNLWSB-6c7K0HlWe69aAKBw16p9GJPc30YeDYW2jKea5uiUfz-nTPtq2DiKSd49ssNWF2R9svwA6ycbSmAcBlfOOnB2R6lZoIZFGFGGGt_j9x2_4lren8rF2wpiMwXJgib4mm-bs3yZY0LC2_3RzAPK9lUMaVoG9dPSVOdBcIzxTkpSA2tNtvar0KXiDuXDdqpnOrtIgQPVqJ9vudwyzCYZ-9PiWz4-JAWZHdpAcne-i6eP1U3hcLdAH4p6cbOPAJMHAet_ntpoYY9tVZw5Nx9tmlK_sff6bXHydkE48E4KNucv_O8RqPU5lq7xDdpbIOmvwkRTuHixyk-A7t-2QVIqdr-wnQ5DxoWQ7HIRSEcWlxUBakvumXtmkcfKreqRqNjqS3KzdSqvLCqrBhMJj8-r_e-v2ujVfHo112mALplYUo0T6815w7F1BBhZr0JK-XthLBAy7OW4uX8SMppuzVd-HMirmA808XlhZllvI78cQxX6tEuFzAUSRJX2F6lahkZyohXzLwBVQ0c8iegg0cUZETVqRmYqO_FSOk6QLUB9AOSQ17Uy6ZAjBPt3mX8hI6o4f84vmjFQHk_00MqK6pBrzFeFtD2ebVT1Bm4TxR1yVgnSkRJwn0-PWXTixk16yB3-bfUrLZHFCirOoZsXmDst4A-vnaxHXt4fhTIA9NHle7t9Yse0NVAkolu03ZLr95IXr1_ELItJoK7-_EqLgREHbVcTBcGPrLMGw6Ie4lkuRVVYWau6Szx9h9Vl3F61FPG5VDDxMfnO0SoUw8QA60FyHFfzkfIrqQqsEqe0Zalr-C4RBH4mFkI705N3sPsCIqF-ryCitJNVrc80UT8Pf8tkg88zosmPRNiGX48z43bQ5EA_FoPm4ZAFZDKn2tEM4ZYWVGRiuMO52tbzDM6pRMDZ9-vx8-YgzskExPgu5MGgwF_laSRqeeyk0ex-f5lkSPb-e1Q8-ZscgCmZTx3a7mvsQuARdngE3cN7Hg5JefgsI_rJAcSfcP8mV5iI_hITN6f_o9TKlyDpQnW-H0QV4kKY6rFocswPAp8281ohXoUnPFI9Z3KstczT7Jb_v7jxPkp_V3DPHnNWkRVypp9E8O8oO7oE9lDHUJ1jp0R12BwAB9AQRWxizIEchf5OAvprvzNRKkX6FkwfCyeKEgKXCohI_WjFH56cJ5BrNz_eikNHArMBBKKx757cggB1Xn_ELkANHHEeUV4PVu42tQh2qlctH4A6bCljqBOa3N5hNZCRMUZ_k2KBl50tcvesoIrm7WbzvfI04mvEDtlJZZjBLp4KnMH-fTRhYufvMOUdwbM49ifLwS5eLMqwic0Sd09J4fXoH4X_FSQhWUqt8Dz_ry2V0IiQwjVCThuKPXgl2YjcRW8FuOx6binHMMsgQRUsz_ey__IAmyhaaRGLEDcJ9mjKS1o7nfzwUvAKRfNgy0A8m4X2OFbtF9EwX-29KQPpV6OIgtq4do22SCt4ZDtYQUOeInLlGYhZAQlsy9bDhz5qIjHxuf2Tal_YDxufDxUbntLkL7nH3NNWVft7LolXfseQWkLr3wIsJ-dZHaptboGH7kLE59Jgf7SdnFgbJ_2W_W9wXoXgilwcODmrVptZnFB0VvrEyMWNxqU3wV5M5w1-UG8U3XLD51Hjf90O7BZgFI82fTMAk10NWkCVevb37hafvJEh3A2i_9T60IcaZuHne4ybhnD7-ajxHiC0LwaheeiYoEdnfudHvGQBBz6mCzRG4scCZ4Mw57Mj-4VgkMzNw9YbcA6Jka7I3kMGEMhpdgkHgPXvWExHCNPAl7oRpIinX2s-x3zfYRMRpAborjBxeL4n7uekT4S-_ghblv9wItTZqc9YR9Z9oEldp</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
