@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>C++ STL基础2：vector中使用结构体</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">C++ STL基础2：vector中使用结构体</h1>
+		<span class="tpl_e_date">2020-09-20 17:24:32</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">7GNlL-wARGdugq_EYPqsHkjkUMz8ZvlwYbM8HCfkMASg36sfGcOY2wnxpelHhl_8I6a5sirkMMib1F-215HX46cJi4Hmi9TxWIPtpdhM-uGi2g4VGQQd2T8INGvZziUrkEovtDlxlAcpOVJoV6u8PzMOPqdU3TTAYQlbTJw3vuQiLcz-fuZR8HtMfT5_ecfp1GjYF7CeJ1dmoIg_xZDS7MLgIbbHeqdSaCgwLKHCiIoQoQyb0Of-xUHGhwoyqFxB48C99RdC6Ggbub7BHYdTm2Kc7je5iGcrSedaz47OSlUin5hFJg0lvUrIX8rF5IdJ2nuquDQxwheP3Ake0ZInI7emC5ewrdDHI1eyLcM5w4NH4x-UIk-rBvooDQALdwiJkPcMon_qTg2UcKKmfoDGh9w258jRX4YotPhF1C5B3r922jT_KTqfczx8fl22Kxz17RNJ3o1ZzzmQxRWnkK3ENBG9l58C4Qm9wcqsPOMJB4DmE6GDu5MqYEZRi47f4uzf2N_c6v-H34mFGm_VTjJMUkmhcxzJ-tvT78fNlXbvw9AD2VONXEk4FGUIoEBi2zIEbhkPHIkVRZImrh1Al7H7FVsHbflpCHPn5CNzmtAUOOtC8JsvvMpWbO_gN3qSAiPnDgh3v6Gwk7AL_ga-7XPj_iEoAU_buPrkVAhloziGgDp_us9BTakPS6k78ZbxEhZhcTswh5K98WC-CQyFfYXgk9HRCW3NXmMqtoqsGzCb-bCKxhoFhVISE38PJQi0prsE-TiA2UYlu0PO0I3n8RZDeiHnyL3n0P7R3bp7qP9h77loQMGIzsS5Ap6w75qJOu8C8a6HRobcCglgSH6mdjWBcSWdXdqVuSiTkjhDbbA9YzXOhgwA7233a58MMccV_brttCWWOWvDTz_KFkeosIYmvVeCfSQ1k79kkl7oW0usnYFLW-57-ht2fao_Dbcn_vfEpS-SHq1r9cZcV5ybwY3ryyg1DX0cJQk_o6I5I-GldkrGh02wZzGJDvapeFfAtrP2M2MMwo3n6dXSJzbef5_rof61_5jRvfv1h57zpc2lo3H_e9_6UmCM0vms6HM2Cn95SIn6dy9_sYqWq2Mko-lHwZGrT9PISp_JYayYpMzWqcoHKkcGi0OyIvpdusDDtdx7sAvveiHiyd1rL6Yjm7nC3OnbXMqTcCo9yFehD4rsEPhFJVqa99AeJnR-A-286ncL2fCr3dDpJmpyBNfz23AmrvoYwq-RhaMNnT8ELH5fee2Q3IA_o4GmpOnvz45ujwpD9lgAVaKlWJheD0wmzx6EiyZIwU44Ezg7xtddGbVuytpO07u9n733shvCl6liIPL3z2ZhQ-HhlOPKkMoIxcDMcP2bY11cnvbYsEpe5ktlQ7m6Wc_wQ6mgwOw8mjzqCxZyNg_Uyw9zfYe969tgljb_diXG42-fvgghgldbkZ2IsUvh4rm39sTzneyHmla6eukACsIMc3XKQEJdHovLetTGoFCDXhALIgBoBbJsrlNySsJgHfHlIlxigshTJqWHNTEWALbDiLcAE-vcEQhW74-Zsh8blkMMVQ3eQP2CGPY0wcwGBQDGiSpmsa0JWLnrBl2bXbWSF1AwUe1mRhiQjHtTSU0LdwbuUr1zt39JiqDG_jeQuyWM72zFQXHTmSvzviDCieRdq26QEQngK359wXGy7xUep0G9T23YurSGRYsNgr7iwLPULhhQL29thAfGh28M2FFd-vnIKdZEFtu1uew-KsMI6l7yoQrscPl-UnstRmxTYFnJ7Art--aslE8fwsPriq_KsvEOE4kUAotZpWmgOEBmIpyilO96-DiuqhtEPBOj3LhhlUADw5qnFgV5I7I0Eat0hep8gp6vSBLYugMg53SAkKMFf8m1RsBWlukBrwm0Yrykpza_dF1_o8SBN_90LzRpkTm0YzXsHIpQLjHYiyzifimUdQIneBfRYnYDnIefGF2UTqgnu_D7MKyU6WN9B3NjnZ85PLooRZ8ip_OAxv6hcNtUHNQ0ROXFJsYG2XYr8dzLteTxIXI3gASOLaqYAFGDzBaB4XRaRKOt37EuEmFBkvneBxL4FiQI1etmg6BF0PkiafjQXi_Pg7-6KhF0RHqerkAYVIcIVkuyxzt2wHmRmdhjRvVUebnfSI5lLKraIIVyQmzS89vxIneXGn7URcqcVXre1-vAt9boQ_pgJ06FCiX-nLc2PT2F_RLuzI5eAEOwhEU6SuTvD0u3sFWsnVpJshKQnrzWC9l2xofuDsoepgDxoRrc3c0QVcQ3Bi6payoeRpI65e90Jl9A4PmGXzoMGyowPegIRQc1DvUifvAAQ2rJCEERDZ2VmMyk4FNPcAQ4CkySLAykT0KZBoYZ9VIGORSklO-i1_yfBcB_qfS7zzbM6n33dMURNZ3dO247-creQHROgo4JAjmPuG25e3xgk_P-m4UugewnQ-e-B6B3jDLOSBO2tHC-FRYb7DOWpV9q6FeYmk7ZHXQXbNpw_uyI_3FYKVskS2LLIwpL_eiU97DpML_la-iwI91umbdHzPFUTHHGYl8gY3fSfxzJCE32Nj9n6_LaVDrxCj3XkVAKaafe1jCe_2EXBG4qX1whZa1q5GHXuSz0v8BBYzQh-5xep1dGiCMQWSyaZst3Ytf8TPFt-o-J5ebUXuQ8udJ5QCAOL3_HH-9WSK1GURFgGTZocliwJceD3dhsHrgxVHrntE2kHFCG13UKTwx-2m-eAfDlk6OHKKMuoLnb2Csk0m15qOxJPV2MAB2DBMFepOpy1lZYKA86-yMU7Gq3BDmwPVS9ljkfkNkf6c4bPmnc7f8pegA41kYukeQVg7zMD_KFPVeowHS12wvOjntTZrBYT-HmZcdkHeELfiKA4Vrfe1T0K0pj80PCYcXj02T5AAuU2vpSuuVSeZ7ZrgscInB1XNUxIMLqacxsjW-KouXqqg95_dxu3Rdj0waAN987vxI_qAg0CZR7JeEKLBqryY7TBBxMpD8zlSDNzk160hOmba9WkmDl9iYkmeLExvv23fruulRHCgctYgWJFIyg5K9ze4_6gG98U_eXtvyfMhn_i-wisUX8AtELs2mkcflRO_1NpdIGe1ad93v59rVwSs7shgVr6cjraOrHQuMX8WhAfYuMsZHMtJK_zKNH7tCtCNbN06SAfd1HHvqUnf7WxykDaeGIyUPBzuYg7INo-Lf9X3HWbWwA2qyWpi1_BBye-WjdnGq3vgcRvPwOgsW1iNdus8TfY05yFaGhpoWqaJ4-S7wbBirFJ59IuECtZDY1ijKBrddFS1LgTzXMPC_0LTtbfhdXnRoS_o5Mzty8ab-mnWWdGzIyvXQHu0RPab54ROZcYusD_dqFAo9qWSSwoTZzXNOnSyAOddAw-_Ec0NoMCPQOvMi1weT9go3HAnWMbpbyOVEv8IB9a10NzIGfUAhByTwBU4q2Bi8L5nuuZW_1PlIPnRzFqMDsKObtBPEk05n436E4EaEmzH5GKSPCkKD0MHL6HNUuQSYPCqhwISvsppDHxMlbuRqC9BqY1GVEEd-3PtTpwr_C4ANxsZ_J0izQRBGRW29GGnvHmkTukQGgvuxeSvchielUPID5YuLMmQ</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
