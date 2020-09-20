@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>cdma walsh矩阵</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">cdma walsh矩阵</h1>
+		<span class="tpl_e_date">2020-09-20 18:21:52</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">srZ2IPNpx1pjpjJ4VgCbiYJR5tWge39U7eTlXG2r8e4QpZFLdo_wy4ba63Z1EDi9wnHTvwlZETn9KJW7PLpdDikRwIEKZiEBZ6O6sY-RiBGfjvkffYJrupzGLsUAoT-VBiLvSqYYZVKXEBqr4dW_wE4ozmWrw-fCOc528LUffS3OhdA9JL_VD-qKYGFYVbafMzZJHVMvi0dLkszmz6t_0z8wCjitZnCwTSKMkV0rwy3swuPxeGCIYs52xlqKNYher7-e1OakW9lhnhOeOJkqfdnTyWTbPaO7ydYJWCVVUl82Ni75dPCpNwvSTwptV-I0BFC5d0-apTPf1z5TGafLEUM6LQJ6QT4NtRQqOpkzOCwoGN22wal9WahDSdwi57b9SwcvQrrXrcr_Ip4CjkqdHITPb4LMA-bNt43GME0FqaxLpjdmZG-0OX5b3gKEKKUuY29nlkqx4dWy3tcvCKY6EdskZpX4QA4dGsoZtb3K6Xbdh1EpSQyV8KwkOjY95TlZOYtVyZGSHQd5RjWkKICLsHdwY-K7MEK7Jwlo-3nHyC8b1JMuyItiPlQKVcg2GfX5WZJrPvLcUejcndHk0TwSHEMCoujmnbT1p3WyiW2gmQqyA6SVMEgEhWdzU_FMkUq3KZsHbwrjga62tWZmWEUcWacn7U4cEimwDp4lUFd-bjMolm9bpd7ThStMNrfQUG8O5Yaz-tGKV7z21qZRa1LS8BMSUCXSvUfIOb5nPdcCqVeSDrIIoHYLTcUgSitdwdOvRJBC7Iao8rtWbcgvY8lXp2Koui558kHtHWoq7czOcRWX8HUkyvwPKR7mALF_GcCPAasLQE8KmQKCpFC1ogkIcIOQcITtmyuGNLNcuDNwG3x4V8WM0YznmCtdjnUs0L_P61OX2YI7eJ0nhOf9n4lLv9qEwPje0UW5MhKS7JUgDseIAJ8OEckhJOmj0qru93m2rbgrmUUUOn7mxmehTGMtDdSNgCpxH3LA4SkSUZhUHdzWh-LiS74Obj-MS6X9jV1T-FhFaFq6sFPdpK6NgIAjvshwDm8UpqV0Z_LIlNbv06VSV3eA7r5YTs7CgLbtTAkeBvT6cSUpT2HHawXIPsA1ABQCgee6NkJSxpi8Kz4PCIFaSINSOT9nHwajXTWxGWk8-1AyIaFdVdHOItzv3_QPDtbaUCIVtuRM5O6C2IxwxTmx3cLIcQXqRUQLXGLSxrHiYV5qXwGVVS1wBSp7zNi4LxDxhB88yp2c1G6ry-jJj9EbDKBYk_FpjNT7bldpSS1-SlWIVLHFYRAjzQF6VkPd8UJ5EnSlOL85qieQd8RpzWA_75RAwG96R5JRsoxemItoKMoCIn2eN2k99hlK3eXB7L-P2txQ0gmPkabj1BIwCQUBaAgcaF569qwQZYsRF8wi</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
