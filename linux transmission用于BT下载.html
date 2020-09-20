@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>linux transmission用于BT下载</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">linux transmission用于BT下载</h1>
+		<span class="tpl_e_date">2020-09-20 18:41:14</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">hU7fepIe9r8RBdDZ0bNw74H11EahxWSNHvgp9DK0RuKGvoVxr_mmdOKlYjsZXFUARSwkEYPHaOn3ughIlD3_JOejp8gZQa0cjIGOAFf9Y1wnZA_3wc8oyijc-dvEjF9Qwxo6847IOHoHJEqiSN_MEytFqDPufL9OigoYu_FTgS2JMx1jzA4PAeZPWKpbhJQvTb3baxXVaeSsUC2Fsy6zrS0IMJ7O49-MbG2gjHpIuzmHGN8wjYOQEVgiJLBzLvxwo8rr63nrKP6dil33R09WcTxy7sj9Rx-WEMiP1TMvBBQBq6c_PWOhhXRanozu3RuHux7w_zYZdIuSsJ8Jw8bUiuxDAMUBJ41TJBaRSKDy7z7Xc5ZrxgPmHcx_kJxXPt2-XAodxx82IAef1FRZuKjx9I3gQ72Q-UZ_kJ3jC6LA-pirZ-enOOjZ1kEqbHwDliw9EfLfSV3tCvPMkQ_O645wiwSec8SlZVca7LcpPQS_xUfXmRdsqbmItcxBA9mUOxdU84xrQDgl78vREBEAjnTtAzvW8SBZXZDlUCSo1VZHo6ywnLyiwRvC-F2nskYIESjHghM-HMs1y0NFzh6A8juYKDFb-fSltq1AL9Aw1NE8oKeuERtzdqxR9n73x15I_vj0Hz03dPQHAy4FMm7FssB5zdlCRKzEj7MfOS0mybkPe70OCpoNJ8g8a9MoWHJFI8IG_QfpK3WdWKoHRykO0mMRzhNlLDuRZlTy3S3NfT7GQY76aHo1aXMqsE1FuAHGd-CiAHjHWDrWtGMBxEaZRmZpBvFPWKFufyRSPHA7zujf829v0Oh1OMozKVTr35OR6cqqaQ_DNSRmkl2c9j4vvN1iQy9K8MSORc4ZU1V17C9uTIKjSjCyth_yJMt2BzBQ6yC5-7RqGw-3x_P6M2G5rpyMIFQnsMH8_wu_Fx_c5p4RSUrXJPO5v-GZJxyU2GpA-RRpqah2ndMw153gNpaME26ZMAPtGNLgOnpwMBaaVqvr8bl-ho5grd0VtnVv6RZJhyjQ7Vva2Fuse2qXENRtRquA-j_t_XnKAQPP03wq1CkRoFvPIsDpCmCoVpQYK7NFfJCYjuCwlrC_AvuwG5JbTltUPkny31zhVmKXUxICTwZWzcHk_vRp4MTkKGuExzI8yr-awhGNU0acUV2NOOmxgAwVHcqYs5j51Kral88GzmFv7Xjgm-kOIuCcndosBOt1iS9HpsSW_SABU0V7gGgtRmMpbJ_DSl_hToKNT8DC_SsWHWgai-vDA-PmouOB797bIccxE_62082DHBoj8pDd-reeMIcxGR075g-8BxlxArH1o_jeWjjDsE5XGxr9FyhRWvPWAs0ZE7elZUMwyLlEJBjpWzgeg4v8S_MEbFPn5suFs3ULukDVPveJB550N8PJW4iDi5TZBfywDNGlptV8jGDtHoscXx6paES4nxZmyrU1fPm26CQ0n2eSEHTH-9i5G978jvlG8Cm1M8JKijv0Xh9arg</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
