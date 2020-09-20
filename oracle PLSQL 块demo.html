@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>oracle PLSQL 块demo</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">oracle PLSQL 块demo</h1>
+		<span class="tpl_e_date">2020-09-20 17:01:33</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">SEBWt7j-HnucgiC0_J7oNj8rPGdmzgUNP62pXsdXVGJh2-zkB0xrGczV5jSh8kbAEF4r1yLErJH2-CKXSW0ssxAFC_9r0bmFkFkFIDAXAteNqjfoTQ6Y-lTV4_UzKp2Jmf38UD_9yZ-MFICBigO2fB0po0obCBOPk0cRE9KYJgcobYspUks1WEzsLpQq78QtyklbagbkirJ_yLEt1G5lr4X-am0W0sKY-FUucCv3jJuKnW56TO66FcIvHpl3PvLDS3Q-1LFxwG3JTD6zQYgceHL-SGDFGPmCn20t0cTUA0-W89T_PCeezkEJH-9nPUZQrANX4j5l7oV4OJP2rro_kCuU-dxhVayY8HLyTOe4aJvUgaqmU2BzgDRiwPGlcP7fiRYSqAsuLXjVCK0WYErANXk4uIMOjPwhOxSmX9Hdim_sqaY79LP4-szXp12JN05FcmZ8W1BBVSX49ggawA_CIK7rJv1u13MAObor4oS8iu4OVT3Mp11FTPlDMNJWAMMtbcAVbm88XReZHYMY89SqQhf6Hdop3AuqJBKgrznnyokrWvI-AhmfBN-2x2iPEmHSZxRltgbW8_WCU_8IQxIDP0s3qa9W2xhkUytb7cmMQAUKMQ7CfK7UWd4RGVnW9ldjPCmH2dM6Ktu_W-Vj77r5zF0qa3AwcZS_0kyQVnow7OGnOkR3LEtE-CoPXekW4fTPPL4s6c_s6x-idJSkqbD0AP3mbAmU22Azdw2C7T6FbsxUB1scuGvt9o4b5iaffVlUTylZD8N4SqruuRQtkyx-GCUl99D_0WCIiURm76gDRzg5idzXnfdAfEQ_t2bhSAyoqjR7KDGAtsNQZa1kWPVfRAM99dLl1T7N-xv8hFr5NpvHg82iFdAf50JNxqCONIbqenAacM5gNWwIYLWGPMvDsr3GU63MMfIriZa-Sd2TpP0nEIDHZ0QyfA4wJlPt-tZu5ZjlHjB__4k404vbMyx2vd2W6brpclsYPM904l5_O6905hrG6cng2UI8lOpkgisdwGEleUF834meWZztOSrQEDNAieTgvlp2-PbTaZH2J-J2d2rf6w8CDKiAzlgFjjIDfC3He0aLpIqW0t2JWJxGyDdKcsd6UtcBsFJRUhgDXcAQjFSv_L6ejXCFwvoiaMJe8gwEGsDunYcTTEYdtYUrhhPSYl8ukYcCzusPAKSurMi7a4kI8EnfPZbn9MZGWOq-TdYE6rI-xhFMzqGGTAXF0eUGsUG0Xu-R-2Ll_xnWtxVh48PueiOE2BJCzKWswFCC0torJntzsE-vZ3SSiCr5VUt3bPiVWdVmS40GEBWsCpVxTxJfI8i7N6j4f0QjSbvLy4dXXRCq-SgG_AxkTfAjBByVdo9IG_OYdugelr62r_3U8nrpBZt9Fyy2B4Y64pFyK4XKKBkHCaO3xUXLQi2SF9KsBu11ZgwmWPQ7qO2Znz_o06oZBzZ-lee7zMsbaeYLi-kaNLFUmvoQSN9lokuaqCfJrcDZoFBoxab7picQmAHo9TW1unOA4TuWGiT_hbjQJ9jf5f00Nf0FFvFU-MajQ9qohlzcH6VOhbD6mYC0mwCGnvhflDwLiVNZ0qIWx4TTiwVUm0a8MefrhrDumzxdXP_2A70Yj2hP1ZligovXkiWi_MbAC0CMejnGRkKHf19vEL5kk1mU3u1mNFt2A9NvVzdulTs8N3zryuJvncB7OFkD0XuYgUQyEdzIv-LN8rNoBGd7hMMjz2mLyhYKMWmEUevQuoVms4Dag46_18h3elMy-WMmMjgdY5c0GaBHurgxYaNzbnTVEws20QWBhlmCRRNWcrQ7c5IIo5OhOd3Cii82plU2TfzW6HAvKXq-3P11HisfiqS2WJvz8R4TsVyVd9ihFzO5ss7IE7WTGNULlnc3knkxyXChjF3mfgn9hIRRqjDF96C0QCRPaxf900ADGQZkMpUk12Cv1XZGJ9mgfWL1ZLCZ5gEHrkn2_h1TKPQqt6rrksyoq0eBSWSTwoka32ivI-IMs1eB5iSYjs_muqY7WvNJas9qgNDsVpX8948w6OC0yklaNT0XDOLGCPFl2CEX286HS48C7GxYFIez1Z_gHySW6eS5GvE0GzQT6HldTjuK1owEzor4_TEWTw3nwuoNfieOQCSD7U4FUsj6EtbB1evEfZUxLkmr-dMLmbfJVwAdlaOXKGTlifyUQrGeZRAiTPTZFuSEuB3btjRJ2iCKn6RadEW9z-VaKo-ROBQF-YdZD_bdzlOiJ48irfpMbr0Qe9TVN3MIrNCr8MPtPNHr8JI63y2-V0yDXWb7oskkdIkRFmP4WgZ8nzeuhSrWxoZOzX3KM5nCtnGq3kDOnimtNCFdhp0O4vA5R1PmemSf736T7SRQOR8zRd1tIaV4MNC3jrL_SaXvRXO54m2-dOHz2RvQndLB78gudyf5s6MIaaaxQT9EzAfgs7GQxYoLE-gRCWpdQYkIP8aalD0O1eSWZ1nIG0jViSd7JBY8CXzz_0szyN8dXNKGOLZKo3p7OjHiqKX94yPoIfFPjGltMZdmq3tYyyCls-VFErigyLp5FAD41aoDKw5C6he_yIW-GQ</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
