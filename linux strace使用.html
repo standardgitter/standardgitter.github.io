@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>linux strace使用</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">linux strace使用</h1>
+		<span class="tpl_e_date">2020-09-20 17:23:05</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">i_ssPZQQC9jDVz7j5ztQ-WYmcKWD8YbOeqTgcg6jt4nXhna8Cnc6fBF_lFg8CDYQ7Pmq4GN57SkL8KTsof6hsJTw4o7d40gO6JyItKw3VCH4R9TvdWABnDNfZqeLqhdAawHl1YgCfoDkLxb77hBLB4U7GE45bg43fbfkaIaFh5GlEkcTUwVEoVKq1-y_UpkxTZjYSYHdQhBta3TTSsQfq2_l0_hQMQfktVtyS-7tQ_Qm8CXRKCjxYEsGnwG_20vxq62KhF5WgmHj2-uNvq70novTteUBFkHZePGaO2tnDof7-2LiCmMNrQ8H9VhF5w0KcCDh8hT-XV8pl78SUV8zo98XAM1LzhgRZWJZ9O0p29MtWssCKSxd8wCjcph_8zRZqJMinh829PQGGPEkiDbSupj-d8OA3OjknGHI_ZYPrruSLTpUIjZtEqrOyRGH93FQ15tJp4-qtPD-v9aAyE2SE3iwZFsGoOt8EtNgGycY5pLaY02fzsDlewH_kPXOE2Bg07Kn7TskYzrtOOZIDSpUieFtbUnUd2v8gtGtsvGrdVYJTuxofp5HyxOYwLHemb-kRrRNE5JufVG6cVTIvphCykyy54RaMqk8j374f8cYEuixlYGYoXdqbPOIvrCsdZpNRtyaM0Key66nEJufoozMGzZClNIJeSHSc1GGWbB1ZQrrtcYtB4Pm0hUU9kPvSHG_Xe1bXAwdD8CDZok8fFO1I0llm--huKHOCGLZy6pXFRsy_qyJO7o657hkIoy59XfjzYiL4Z-X67Q3qtJFKPspe-Vx0xgT_H8O0gH3B28p8SLSrQvlEoIckucWOwA8Mq_jNjXOtvSUQ1XUqBUV8Jetnb9XhyAfmp03-K1SfCMHJHT6Ciumwq1tT3C9pNOH1T_g</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
