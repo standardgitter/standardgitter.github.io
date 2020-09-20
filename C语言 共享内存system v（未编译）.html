@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>C语言 共享内存system v（未编译）</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">C语言 共享内存system v（未编译）</h1>
+		<span class="tpl_e_date">2020-09-20 18:24:39</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">DQp0_eJ0Im4rz3ihc_RLrO-oaH0-rpv8SFp8i-5pQO4DGTUylOsyy6U_pLR2UiFkc6QgQj9pzEIpMS74yUBP-ZVF3rCuvKA3X3eCz_1cDlCeASez9O8WuVajYpG6aVs6F5h339esz0Gmin4NgBIzT8ZfGfAXErrafOBYiej9jbpVcprfFqy6-FBnmk-YMEF3VhWpK-buie30MgZOrdk65xPA-1YNKHbh8QEd1dtXt-1QnMIF7MJmzuj7as3d0iryynOUsOkDemCDr_vWyLd7a3IzgzBWBxwT-xjT-a31WienOO_N4swCHtYk504M8VacvXCAukCD-aqsZ6v0qHFVa5loEldylXbT-ztn0v29_62m5bgXk50lZ2DKUrA_yPYzHsJhybCOIbgGfPlga9exDo3EswHjqboODlwzhzGMJ6U3ok8D8KfYvW9qCoaLM-9B0lnQ7mX0h9zLaevbhYP9_MDnsxTReZVXh1tBL8vpagTxJBoRWLGxZjZxm5SiEjkKsqXJ_iqS4uWNmyRX1b9KQ6o5HxPbJF_SJZMvMBU5zNbQNFWlzWkvp-8Qfq071BlWbf7KCh0GxwjTyAy-4gYC1YR6XtSCtmT27cxQEW2rdFPzzRE02teKtYvTo52B_HITvBbVtmByd-whse2Cu1TPMdyTMKfHPWlZlsjBQm74FvalBknkfujCYldrqz7vKYOY8OYf9phdphnh2IBsmkl2GBkRBv_Bow-UW7NbFpb8tIQmYzvfOPFrNRdL4ZQ0e2ICY3XgJUVO6OVmm1zXFuTdCYGDMPyrV9wE6FHrbE45smrpovIddjn9kweSAbZt6QiKPodcuL7pYN1Ax_hE_2oSsInt-NvZe3gdRCfjXE4ZmQv2UaRD0314giDct_2uypj1JIJdFM9kIHJXNClzI2LxWWKrrxLcVLI_VUGatIZbjzn0MwKfkVfR52S-vNUN5CaS8j0FM2ffnXz8_CavZ4X82ej93o8U67ub-ogUAu8_U6KLjmZQArHyw-xcfNqDpgKxl7Rw0RilLdBeWdjxCfWb4U0BPYfkQkEXAUAkbe6Qz4K9pG-Xu8TUrWYxjMxo8d8yFJORenEUvy05cZRK4wa0ktoLqxy8-LaCmbsSvGl32OiFuxYJppGm8QVBn97YpRKg61ueiDByOvgjed2VvGArGgApMWeBBEFB0n-_B7T6t3oStHu3MhK7I-3NNFS9p8Lh156D772LtIM9nURSkXGZNpx2PsAL8VNaK-OPtr_7Mbw8rJ7ImBpv_tmosHGjDcEM-VCV0wT10kiKbY4_dVs3iyQyrU19hIpJ_7CrodUS52L_oFokoCmXMc2WEPYawD-vaKSxk8tJtqnsCN9zCsY-tvoOc2zClnihuKxEvFShaT0V5Wky7_s62PvvTG57HjzZ2dokQeJ5x-BwztylrzA3IRn06ZjiBLtdTPImDIZ1KdR0mN4p6wQjqDNu-phh6CLxNQMUythUmzBdAfE5cm7XksKd8X93KRIWQhBYqPJu44DorWR1LonwJHcs-z8x4m9dTZAuzGiVd-5qpR40lIhtDVJJM9HT_fVYSSzeRL52Mtsk28tG4JSGq9vxSE7JCp2Jexle_eQbkoc5cTJ1b2GSzrfdn0i97TbM7-UAIW7obV7KBoL1qYPVKd5hQiMZ63ZZmtBzFmt39AxW1Sb0dW18YwjmBXcZIo21KPiv6wEXGcaElD4T8hFmtCXBZmjg4p-6J4qO3mMUg4yOyppizF9CAP4TW04O5HOhVh4sRKV9IvIpgcLAwWkZ7RXL3MKjjmVikL4KmCyjbRXhKIRyrWyYbadg7RnVOMf7AXyfKdWtndN_f0nEJLpF4RwNTcc7QnxPg7JA4d6x0WEJHfspN_hz-i1kf_hwBILZvvyik5XKblLPfEMPCCQa65GlZhmqQjV-WHzeaVVok9KykQNr9Sk0c6cUihb_p4k00qiiMxBwWhgDLOdDNDe0tK7CWjYpHmL1Lu00Isfz6O_sZAPa45B0t25MTwc39OC6WotOvGlICBNibgded6zBvrWZfzhtuHzXEPWvc1vDKxR55zgJZYFBfwhdS9AkqxcBN-H8UFftTK-yMHg2b0QsjUEWub1Zn-RoK5SuuV54882fx7BluNnMNY3HYF2sEvpg_giGIlvQd7MNLYNKEDFM7tFHBwi2X_zbN4s8GVN1HHYw-6ue8PxZ3QjBcmYQ__5vwS9UPG8ZacbgyVZn4lz0OtMERsdyqHrjYr2ib_K6MA8iC_O_UuPuZrrAorFbmi9-ZuUDW6-39bnA08ULVkEaPord37Sd_7K0-QkVEDbE0XqHc3jvGTblbfW8KY_LVHYt5kqFK_OGzFSbrE6bpxbzuG57SxJpguMNp4a-aSUEBtyJ54m7jTZ36GP9z_e8SvcsPrgQNENrJ6gF_bo4LFHHpFmVYo47oAH9CKs-BjP1mUMgd8Enn_aybgLaYyK3S_C7VySUbHa5ztRqykqIFOrkL1Sl0_mjOwdv8lcAstki-zCW1rRmN2Z8TX_7MJRmGNAcnR_0Jw-SZdba7Hh4YUts8k52-Iz-NPgAvEOcL2PY9e7cwAQ70A3OWWgw4w81Y9g_X7zH-nTy7RrO0-r2AsjPcqC_SiIWdphbmPMMWTQPt42KtnHVtWpusygQlwSqqYXAe2zlu3WCKHUyEN6ZhfKZH2_RIXlmxVHcEZ59H_m8Fbxh3eDtKxmdgraw5HkK33kPloQGVtIMDuZQQt7wnGKx74fSLUVnTSWG-VGXFvY7yboZwjFwLE3hWwb81ThoOKD81fC5Z8mw_KSTEPfDibly7Bn5_RKBfv0XD2FGJTV3SfaAgS3NPR9gtIklfV2zRb8SIO9KHJwOn1sKU9H80t_Y1k2xWVDpVbDrEmsjQNsz4ntsn6TePsJC_Q</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
