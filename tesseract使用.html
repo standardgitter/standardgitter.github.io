@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>tesseract使用</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">tesseract使用</h1>
+		<span class="tpl_e_date">2020-09-20 18:40:21</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">dtCkf1I34mAEBYIRBv49rxNJ2SVPXmnfhz7__5lDD724pFT6q7mbWJpjo_1fA8z348HS6y5pQcfi4yw5Mq4dh_wKU0WOs5SwDBwda2OCq2QPYLBFbJlooBp6loybjBBtMIXlrwVTQ4a0xi0Zyocp8cH6vEEiDqBSMw7IqwHYUU2tp_opxJxUXQiec-iRt5LO8D3sAzK67W1O03URdR8fB_RGCMAPYRW9cER_vvZzGSNJdyEu4z4AC3d8M24jTkekn_ivPxGBtAsoava2n844AmtZYc0kfea_AM2XLvwAea-t6eLqmbN6fyH1uTmKgR_vDy4w6HovI_2ZTzWqoBljl4n2QMNyO9ZLj6AnFStyXAZUxxFxQa61Kmc2hsdNWyGCklU2nbdDxDj3ZhCwE2otRtpnJYx0YOAnrOE7XFjvCL2B5RAgwGe_Rk1EWf_7fyjIL-WYAwR-VrbCczw1VRj1jCm4aRevoapIOREhsCwff4tLPjn56_cr5PUg-Ws0A-MNjVcMAdvfVqtTi4YYycwn9fyF5aC-pSkDC7cbgZ0m1ZULbG5que6bf-3tfBS9lskC_VRyJb16CiYv_gQCLx-XJJwnCfxsH9pzSsOZhR7m22LXpeIjqmPKWyK4nunzl-c3DRBTX-V0_EvLFvIMr-8ZCO0pe5YTKHBWWxv4OytHCIgoc9Zis3pih2Gt_nf8eqz721vBnaKNW8HwQxkpdE4oCCgev2Fs5utezxSSLFDgSo-sVM0bezVy_XMdWDgUPO8sdul8GsAKv4cWsePfrQMSaAehUQ8bHSJInKjtzvgKuDD2PspjF5ePZmUlRhbleUnbBjKQ_aK3b5zl9RyWEaG2T0akM9k8cA_0Yo_G8DVthcyDUqmkmlNXy8b6KU5auiPgMq52OWc_NKOJ5Hnti2A1OL-8hqIqQMHMF6WpjqfS2rhT9fT2dd6Dyacjetuf8dW5QzvYZROIbJtBNsD2yoy3SOtRvvqPWi9mqNcxhq89F7LFXHLK_VsL3T5DxH76K08zUjp30f1ae0dP9dhBMSSogUh0hU89GObjMZSr8ZpmKGk9hEGTSGS4-lNPWLI3uXKpQXEUw-sVQ0HFdj7ykBp3SA</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
