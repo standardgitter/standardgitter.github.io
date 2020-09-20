@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>spring松耦合</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">spring松耦合</h1>
+		<span class="tpl_e_date">2020-09-20 17:15:52</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">Pn4T87ImR987oPlZBmlAQ_Jt-Ep3ekQEfL_Z_nOqRtpDNqgP4nYpP1pljF5Z2-h3yGxkPz_88RUOggfwcHZo6N2ub5ZqLPqwX5DVbTwVUh7ajeLgzUKfJCkUGwUn4jzflO5YHiLLDCtn5-0ilx9tf5zMUQkdCM-C7omtvyVouRPlLA90McBUrgAoQFq3ECNcEJXgCg1T0dFfzOXjnItrts7pQElcYeTZbmzur4WG_UinG8yOHvZt6HgUPQs1SS74pQgHbolf0vFQ6h5rsW4RHqYSaL5unrSc0hZucTRyUByWhcY-1sU8-jyySSX3MKX9O7PDzx85z7Qsly-Y8sY-m4aiGTBJ63qXwSxAkgDoaVwOGJZYE-wRUqDur1c4iv_CEGiLPSdOFF9P6Tcaf_6VJZe9kouBVeO50L4dApSnr0f6yQmryErgCZJjbUKKHk1TdT9eB1bCXOlqqhlxh4S2TmHfS2YZ9gLAmNPzNRKw1tQy909HqOF1U8EvFJs6g-ZRiigVum3YtqSEoQGcHl4KIHb5azXDv2C4SKZL0h6hPi-XjBKyJ76MXaKAuiUW70pAFcHn63Jl2b19ozxQcTQsW3YpqH4sZ_-BQ6MdNf_sA--78cq8AKNCKuGcD_kiqST9X7PzUXN-aiPExO79cVdhWLTeheCzcL3xwgslXzDOPJZgULTjfpE6wiuH_4dDsX1nNyoKcTzZoME0cp4BwKd435UzH8CtlezxG13bwavZnKt1ZJjpnoZ8oUcm0Qmo4Tk_p0DKtDQK0R8doA6f1raTx3KlMcCnOFTfn0ahYXUGuoatPMN9btvxWFrSMbQ5zGlkueq3p3Eb7d9DOaGaAuaL-G4porGMw4nRfsHVvHVlxL7x3D3YhMfIqeadX_u2r4BmoZzDGO8fvGPL2sQ71nsTB8wHZhcyi5Zo12X1l02OWmhpFEbuJKyRV5lLlNSdgNFsDEcEnYgj7_SqGpH4oKVBxRhSaDbUMh5wLNVMjOHL0Q4J3e-TNBDP07ML3zXm6Yfzi3RbaxeHATcg-8_ttAO0rUiGT46t0O5WpkpE-vd6vOk7Yf6rWNyyDXkXe518nhtFfM1FD8ow5dUljf6fupC-cVL7MymRtvSrrDcX1maG_KqlFB_4GOHt-W1CY-IBJtTWQ-3cHb-p2ktaz_PkTyhH14XFhkv9rlEfdg-o2UQrkyZspfO6yR432iSYgmyK1jwCwwRXsoxZDd3DqYjcSZlHelSQ6YkyjcIwg5eKgN7PulCEloUZh-UPkaDPYzaiyO5TGhAjckwjGOM548ORM8SCV_PF01I84rbqAxZw4ZouJu2M5oDOXkRyM_8IT4wP7PaN3svgBJMtCRp_xAlSyaaNvwi6k0aYs8UPLWbdYjfJ5-AKBZUqmUHhejgCWrlb6VPnHgVhuHP0hrtiG61P5e7gmG9JOW76m-kCqr2ETo_IcFy2kIhfYnz595wVlURlq9C6xifTt_uciW1d6gi3ZLCvBIeh2fZHi1oj2Pb-oUl154AV-MEolEFdbnjTq7ia2LLWyGaLf8CJLGWgHLMrqMFQ5s7XgPA8rlt_sh95PW9WKBHnoNM3nR3bD3YkSwua72fyYZZjFFntvoI6DVyz8qiJH_hPJ_JlYtE02C2-Vzx9ITg8kFCzMdK7KDeBGl8Fy66oqt7rcyjz5I-dtCmSKY4bkTI2HKV1Gvfgb0mVwC3ahw6XYNUiJOgsof1qBlgE-_1XVhqF9BP2Gs6rtau8S_dal_gpoSVN9iJpGUPCY9Et7idnhac_swHIM1dav83UKYXbjZoQB6MpD1OyEsW2eFE3h9UAhpBvil_SYFLMR3G3R3rlO5DPOvCw1lIBbCRWTYy_rPxgMWVOQCS-yUvpl8cAgXRtmSkOMuAQmUNRmb_fLG1PLbaWBwVUNV5AeAum9uGtKnteb-7JrQgpH80qfdBJyFQ3ClKscD-fpg9opycbZHgXwWZuhZag56skUhJ147tfspLNR5JO6TAjoQS-8uZoml7QPffoKPbvqiDwUNocuICQpy-XUwNde4G8CiXIjllOWIyYLEhihLeiRMJT2Mf3XTeVFuxwBhPC2KyqFcd71545Q-MOqd90HG7fqY8d7j3zfNmUduo9WqOsdyo08JXrH2XbCVf_7c_MjeIE28LFi3DfP-xHQn9DA0Q8AKDPYLa9g4xNA_0ku3_p6Cg68vmaQo98GNGZl6ny-dOVwSIq_te30C62EI5Y3AK3QY4c8FZQKym2peUBLtwoZVpYgj0dy3ie2bRGzijyMZ7h1ZD7jIwjXxd318XQsqTSuZNwfpK5FbgL9WYpav8HloAt0MeNK3BEEgdISl3i74_bZpW0PLaKc_P4SNjJdgkHLxUONJE-7Fs9HsRhF01luiQEtLfNiSgCZUnRgWuIHQQmok1HKoUez4THy0wdJ0vOaoiBKbOEOR4fwlTtWcP5ynsd15AIHY9UPaR-lwRRZOiRtr_N4hoUVkrwifPNMyN4aF5lcy-q5WHOpRz0Q3zlCSkxXwsGJKfh_XaiUPw605M8C3-_t82iAac4kP4-RVS2wI_y_RtfH3NpTQ21pzBbCZ5dvpTAtyG8q311csU56oIUtRhRqMAGK1DxHI-iwOtB7q9SQ8mVRSA14Z6XZM5sQ10pI1sSD0v9CM_3kfy32uf8PFdpogRarFsrT_nHWE4HEZf7uue2sZQB8PWkA37ZstZ9dTc7fA</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
