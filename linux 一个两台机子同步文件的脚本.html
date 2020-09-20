@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>linux 一个两台机子同步文件的脚本</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">linux 一个两台机子同步文件的脚本</h1>
+		<span class="tpl_e_date">2020-09-20 18:28:34</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">cYUF1-l3b6zl2KcSpyPCHu7zroi6b88_Wc9JEXSUqhNh-3R6vIkCIH0kb9GXkv2MY8jGV1wTegYgQQNFK8klxj2IMzGK9D6o6T-v7C8FEkgxI0hRNSwhUPq4iqX5hUvuYxK6vMC7zCyHJshPmZNttUAzegd6SACDNwxjKLv5GCJJzogo-dT0XOXD_6mlSUxzZoDwxrlxuyJ0Dr3_gAecppS8q3U1fygbTeh01mYTmQ8AZdrhkgNimAt5LZBswodVC8ekXZQmf-EAMiSiWunQoUoL0vn2x_41JDrul8gBtj4hFaW8V564DaZgcF5Ua-Qeg5BduGplxgfr7X3Pm0e2cbyVbw9T_qwAIxmOOouPDLGdg6iCvff8nARJOJgO8JUb-ZIIfsowdqQqSoICpDD4sX7HdrRy9Ux72Efhws_42QIkFNajRVNOUkhF-94rtQYPR-CveDkLQkiRslkPq3RqxuMBoWvBaFxyQ4ug2niZmXYG1GtUldmZsoIxEE7m0sBCUAufITdPTWIdAmLKuyQ6B__RZdbWsLyRV-igoxIzz37KT7LXZKa3-dDiUXUd2_ahYL-NMTHBd4QzTm4Ou5_-I7vp7X2aKsiR53mGyV2S1vNI4GY1oynpFMgDTXIaFKMhgoaek5YDhp6gV3JuPsWOvuZMZ4Dff3d70cvupfUusMVmSX0nqLRfVWiaURdqXs5-7U6uV5iL1HgWpTnDpLo_GCAnANYjHAUHY3RKK6q7-WFV5GamyTP7PObgGOJQIuYqG_S--ExAUIbt6YZfokQNK8QiW4xdYwhw6LdQM0dQ5eDVWKUM-gAEoCNEHqvRTmHTVGdbT08w8Pb_DXFv2NnYThoa-1XDk-Riuly_ZU955i3Xa4VFNDtUSrQUDTsT4euenmO3zD1bdkQ21tfzP7jzAMZsQqG188lLS4QBnfxw2ADQFxMBCqkjAdoBWrxaMoTiJAEbcLIz5ur8gwsUWna8OesfL3XC2ob_yGfpsF9OV6fA54j1looxQfjH0o7O_WXVqZfj8Z2AmL6ib1PaOzBk-ez6JELMzO4scqzuzPwsqpYgfoNmn7agbmUx3z6WGjAVsoZUkOYBd1drZkEpWTLXN3aN60Shyk5gPU8ehiuue6dgyLvwKQqAQTa3mog0udHdWRWRFwbQNH_DQX-hCzzLZw5t-lzx8C1wxchRZkQ-83m8ybGZ317U-wl9RbEEmiRD5oK4rSJp04bLBO0fdG9R1CBGvaEK6RuoCUe6YzEa2RvQasQWtAmglNr57AacTajuyR3pZlWYUZ3OlFn7qLvVUeuLlM5bjjIa89xfw0FIH7LaDw11YHQ8TFoQ1woJ65tF49TOqwxD-gTqFqCoLByDURhEL5M5W8Jlt0REHjduRNA5mmWuvN-qWgDyO9i_Nm70AdCCwuNPot3nSZ4wx9d6wVSK3bOQMqU0VMgSFy4J5pOqBAqOlh9WWBJo2LYyK_8ydkr453WYeEm2Tnhmvhv2GM7zlQ2aTH_55jDyAQUq2cL2l_DMVz0nttHkQJgcjPfpgZunMe7i08DvDbuOehXCFJ2MYmbDk7ij0EQg1uXNTQPwXg_NFqCSCv5qhfUon9DJ8meDkda66y4pA1bCK1Pb2O6D1cPbgJbiDErmZqaw82tI-MrbiDrW4cPVL3dm0fipb-i_UNx9QWZ8GeJ_BPMxoNpp0BvK-u2PTrOAAlSpmJPefR1myahzd9PD2ZMSZQxhIlaEU2H_4KvhRsBgQWEVCVjcC_oONSg3pJ7O-dRTG0e9_IY4XWLHvOWfNmqMffhB</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
