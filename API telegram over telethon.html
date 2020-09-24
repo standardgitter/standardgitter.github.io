@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>API telegram over telethon</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">API telegram over telethon</h1>
+		<span class="tpl_e_date">2020-09-24 14:38:45</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">ImhsO-_9P1hoLZQ2b_TarbTvmDBxwIAfdobiAM4aNr2GQ6Bh3gOZktkl0AwFKKYeWRAl5HqFsU13eWmAgyyCbQIKneo6UzjSjDBp6hkcrGXls_yNxLpq7X2S6-SYhd2_PATc2oN8MeGZACxLBE7Y0Qoqtmzm0ePqqCL2FdJJepo3pbAc6LF1xjs5drFGBWpE5JoYhOWte96q0jdQMTXPZxIbucNARyS7ZmqfArgpVTHh3TeYPdAhNQfBP2ImQY5t_MM8wKxZ-q-IF1FJ1Bu-feoxMi9sBJbInPrGMrnbDUZ2EkCMs3J8bCMrPLSMj6OjmkqDoDzfEqFsDsf9ufM5sqRYdJ-Rv6oaSzvqWkSI90vFM6U9zfZHlGJu5vCsr3j7KtF1zI7xOEOYhIAPkU2lMYLSPERknFNF1qMfZ09CVz0E2uk9RdQJ7VtipgsSFahSLno5Vb3pXOo2Hd3-73umi1wilCXrRakjuFKGCNw7dahFVzrh6jqoPLKn1zBB5dWO6qpomAwwloahFUYIp6XEx_6XNCdLPuxVAKoS-lChgKmS88QWiD6dAunkpWqnXbfP4DazR1kyWmwH4URoCMeyYLpd9k8reF2AR31CckohmcHSude8nz0DIQL77XPRKOhBJ8XBkEG08Vx-u7Pdk3TQ_q4SmWzYfsYK3dcpE68szNiiRxlhSEoUlgJzCADcn7CjNcKqlquEd2gGfUrBsDyqoHAj-tdt6-MXITsIulVwTbYoDorqyZ2oT1UMlhB5u6sxTkHgxVGGAjDvF3REjXJ0tsIoTJKKDfjCtQdrBwjkI9K79XtfQqwUSQosi1gCiQWrn2AWcU0m1Cng73P9kroi6qTjzHB-jE819gavu6ti-1MYpDyLF_ACnG_oOG1zdDPU21q9hbbvRVH6Bna94lVdz8XBYfAdABogMIZ9_j8JmIMoTTQ5C1X9TllUadPsvGalhku1ieYjTVdLR4vtFY0i8w5UWJ8n4bv6TvSMZwfqVJ05M9FtatRkmGXbHL3pj-ByjFArvwjwjvXxTja4HNot2Prr-QqQ3U4uCG0VQToqYqEAAfmJpXg7d0uvKXABEdAfMwtJXJCjWr15JjozQo83eIlboIyFtV1jExU00BDCpor4XJJaUF7kR9gBX-JBpRI5PSSAXRNRklI9QOntXw6iiCJmlHCyJA36JxZcw8_jP5fcQTmGFcecHIOCBqmZMElqwlSSYUsY_cxAH_D5cnDX-FxgU4V4x5vtinf971yX1bfDrYkHWT2lBJxlkL1DGcNW862N8wtc0k16cT9dCesA5dcgpABt8H_He38fgLZkQfLfLvQRA_Lb3FCBc6Qoe3i2AkUI-ZamsorslP9XRcTSmq4G-PcVXjre2VWA1El3CQ3c8K8n_KEfr7q7K_TtYZXWmbzaDrvx3uzmlfki5pOWkjCNYcKEW3p8BoM9m_vnFxWTF0ugK1FumdrS2h6MVktcGYbWYvQORB_1738nbi7292FdhGYfDlrRqd9l2ZK6Q57E-LDEJno3A9_MDuxO91arUP6GNsmbgOvypK2OD9bmRNWnNuRtI8m6g9khGprfHfBBqoGlFdP30OPsAIWWKBSfYNizYBZU3me4wiHnXl2JblF7lDDuHpyvn4y6wyZmAW0</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
