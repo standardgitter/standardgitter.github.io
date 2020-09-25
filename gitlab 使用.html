@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>gitlab 使用</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<style type="text/css">
+</style>
+</head>
+<body>
+	<div class="tpl_p_header">
+		<h1 class="tpl_p_title">gitlab 使用</h1>
+		<span class="tpl_p_date">2020-09-25 09:10:32</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><p>new project -- create from template -- pages/plain html-- gitterrobinlee.gitlab.io<br />
+删除public目录下index.html,修改public目录下的东西,提交</p>
+
+<p>git clone https://gitlab.com/gitterrobinlee/gitterrobinlee.gitlab.io.git<br />
+git add -A<br />
+git commit -m &quot;fff&quot;<br />
+git push origin master&nbsp;</p>
+
+<p><br />
+左侧 ci/cd -- pipeline -- run pipeline -- run pipeline</p>
+
+<p><br />
+=============</p>
+
+<p>git lab ci/cd schedules创建, 执行代码也写在 .gitlab-ci.yml 里</p>
+
+<p><br />
+job:on-schedule:<br />
+&nbsp;&nbsp;<br />
+&nbsp; only:<br />
+&nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; - schedules<br />
+&nbsp;&nbsp;<br />
+&nbsp; script:<br />
+&nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; - apk add curl<br />
+&nbsp; &nbsp; - curl 。。。。<br />
+#由于默认使用 alpine（linux发行版 体积小 5M）&nbsp;<br />
+image: alpine:latest<br />
+所以要先安装curl再使用</p>
+
+<p>============<br />
+如果使用 debian &nbsp;当然也要先安装curl<br />
+build_submodule:<br />
+&nbsp; image: debian<br />
+&nbsp; stage: test<br />
+&nbsp; script:<br />
+&nbsp; &nbsp; - apt update &amp;&amp; apt install -y curl<br />
+&nbsp; &nbsp; - curl 。。。。。<br />
+&nbsp; only:<br />
+&nbsp; &nbsp; - tags<br />
+========<br />
+不同docker对比<br />
+REPOSITORY &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;TAG &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; IMAGE ID &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;VIRTUAL SIZE</p>
+
+<p>alpine &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;latest &nbsp; &nbsp; &nbsp; &nbsp;4e38e38c8ce0 &nbsp; &nbsp; &nbsp;4.799 MB</p>
+
+<p>debian &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;latest &nbsp; &nbsp; &nbsp; &nbsp;4d6ce913b130 &nbsp; &nbsp; &nbsp;84.98 MB</p>
+
+<p>ubuntu &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;latest &nbsp; &nbsp; &nbsp; &nbsp;b39b81afc8ca &nbsp; &nbsp; &nbsp;188.3 MB</p>
+
+<p>centos &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;latest &nbsp; &nbsp; &nbsp; &nbsp;8efe422e6104 &nbsp; &nbsp; &nbsp;210 MB</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>+++++++++++++++++++++++++++++++++++++++++++++++++</p>
+
+<p>同步github 内容&nbsp; &nbsp; &nbsp;.gitlab-ci.yml</p>
+
+<p>====================</p>
+
+<p>image: alpine:latest</p>
+
+<p>pages:<br />
+&nbsp; stage: deploy<br />
+&nbsp; script:<br />
+&nbsp; - echo &#39;Nothing to do...&#39;<br />
+&nbsp; artifacts:<br />
+&nbsp; &nbsp; paths:<br />
+&nbsp; &nbsp; - public<br />
+&nbsp; only:<br />
+&nbsp; - master</p>
+
+<p>job:on-schedule:<br />
+&nbsp; image: debian:latest<br />
+&nbsp; only:<br />
+&nbsp; &nbsp; - schedules<br />
+&nbsp; script:<br />
+&nbsp; &nbsp; - apt update<br />
+&nbsp; &nbsp; - apt -y install curl<br />
+&nbsp; &nbsp; - apt -y install git<br />
+&nbsp; &nbsp; - curl https://gitterrobinlee.gitlab.io<br />
+&nbsp; &nbsp; - git clone https://github.com/standardgitter/standardgitter.github.io.git<br />
+&nbsp; &nbsp; - ls -la<br />
+&nbsp; &nbsp; - cp -rf standardgitter.github.io/* ./public/<br />
+&nbsp; &nbsp; - rm -rf standardgitter.github.io<br />
+&nbsp; &nbsp; - git config --global user.email &quot;robin.lee1117@protonmail.com&quot;<br />
+&nbsp; &nbsp; - git config --global user.name &quot;gitterrobinlee&quot;<br />
+&nbsp; &nbsp; - git add -A<br />
+&nbsp; &nbsp; - git commit -m &quot;sync&quot;<br />
+# &nbsp; &nbsp;- use personal_access_tokens [scope] write_repository<br />
+&nbsp; &nbsp; - git push &quot;https://gitlab-ci-token:puyHtt_44AzqLPQxK-W1@gitlab.com/gitterrobinlee/gitterrobinlee.gitlab.io&quot; HEAD:master</p>
+<!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
