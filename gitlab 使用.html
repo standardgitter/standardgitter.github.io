@@ -4,112 +4,92 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>gitlab 使用</title>
 <link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
 <style type="text/css">
+#encryptedContentArea{display:none;}
 </style>
 </head>
-<body>
-	<div class="tpl_p_header">
-		<h1 class="tpl_p_title">gitlab 使用</h1>
-		<span class="tpl_p_date">2020-09-25 09:10:32</span>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">gitlab 使用</h1>
+		<span class="tpl_e_date">2020-09-25 09:22:21</span>
 	</div>
 	<hr/>
-	<!--{content_separator}--><p>new project -- create from template -- pages/plain html-- gitterrobinlee.gitlab.io<br />
-删除public目录下index.html,修改public目录下的东西,提交</p>
-
-<p>git clone https://gitlab.com/gitterrobinlee/gitterrobinlee.gitlab.io.git<br />
-git add -A<br />
-git commit -m &quot;fff&quot;<br />
-git push origin master&nbsp;</p>
-
-<p><br />
-左侧 ci/cd -- pipeline -- run pipeline -- run pipeline</p>
-
-<p><br />
-=============</p>
-
-<p>git lab ci/cd schedules创建, 执行代码也写在 .gitlab-ci.yml 里</p>
-
-<p><br />
-job:on-schedule:<br />
-&nbsp;&nbsp;<br />
-&nbsp; only:<br />
-&nbsp; &nbsp;&nbsp;<br />
-&nbsp; &nbsp; - schedules<br />
-&nbsp;&nbsp;<br />
-&nbsp; script:<br />
-&nbsp; &nbsp;&nbsp;<br />
-&nbsp; &nbsp; - apk add curl<br />
-&nbsp; &nbsp; - curl 。。。。<br />
-#由于默认使用 alpine（linux发行版 体积小 5M）&nbsp;<br />
-image: alpine:latest<br />
-所以要先安装curl再使用</p>
-
-<p>============<br />
-如果使用 debian &nbsp;当然也要先安装curl<br />
-build_submodule:<br />
-&nbsp; image: debian<br />
-&nbsp; stage: test<br />
-&nbsp; script:<br />
-&nbsp; &nbsp; - apt update &amp;&amp; apt install -y curl<br />
-&nbsp; &nbsp; - curl 。。。。。<br />
-&nbsp; only:<br />
-&nbsp; &nbsp; - tags<br />
-========<br />
-不同docker对比<br />
-REPOSITORY &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;TAG &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; IMAGE ID &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;VIRTUAL SIZE</p>
-
-<p>alpine &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;latest &nbsp; &nbsp; &nbsp; &nbsp;4e38e38c8ce0 &nbsp; &nbsp; &nbsp;4.799 MB</p>
-
-<p>debian &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;latest &nbsp; &nbsp; &nbsp; &nbsp;4d6ce913b130 &nbsp; &nbsp; &nbsp;84.98 MB</p>
-
-<p>ubuntu &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;latest &nbsp; &nbsp; &nbsp; &nbsp;b39b81afc8ca &nbsp; &nbsp; &nbsp;188.3 MB</p>
-
-<p>centos &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;latest &nbsp; &nbsp; &nbsp; &nbsp;8efe422e6104 &nbsp; &nbsp; &nbsp;210 MB</p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;</p>
-
-<p>+++++++++++++++++++++++++++++++++++++++++++++++++</p>
-
-<p>同步github 内容&nbsp; &nbsp; &nbsp;.gitlab-ci.yml</p>
-
-<p>====================</p>
-
-<p>image: alpine:latest</p>
-
-<p>pages:<br />
-&nbsp; stage: deploy<br />
-&nbsp; script:<br />
-&nbsp; - echo &#39;Nothing to do...&#39;<br />
-&nbsp; artifacts:<br />
-&nbsp; &nbsp; paths:<br />
-&nbsp; &nbsp; - public<br />
-&nbsp; only:<br />
-&nbsp; - master</p>
-
-<p>job:on-schedule:<br />
-&nbsp; image: debian:latest<br />
-&nbsp; only:<br />
-&nbsp; &nbsp; - schedules<br />
-&nbsp; script:<br />
-&nbsp; &nbsp; - apt update<br />
-&nbsp; &nbsp; - apt -y install curl<br />
-&nbsp; &nbsp; - apt -y install git<br />
-&nbsp; &nbsp; - curl https://gitterrobinlee.gitlab.io<br />
-&nbsp; &nbsp; - git clone https://github.com/standardgitter/standardgitter.github.io.git<br />
-&nbsp; &nbsp; - ls -la<br />
-&nbsp; &nbsp; - cp -rf standardgitter.github.io/* ./public/<br />
-&nbsp; &nbsp; - rm -rf standardgitter.github.io<br />
-&nbsp; &nbsp; - git config --global user.email &quot;robin.lee1117@protonmail.com&quot;<br />
-&nbsp; &nbsp; - git config --global user.name &quot;gitterrobinlee&quot;<br />
-&nbsp; &nbsp; - git add -A<br />
-&nbsp; &nbsp; - git commit -m &quot;sync&quot;<br />
-# &nbsp; &nbsp;- use personal_access_tokens [scope] write_repository<br />
-&nbsp; &nbsp; - git push &quot;https://gitlab-ci-token:puyHtt_44AzqLPQxK-W1@gitlab.com/gitterrobinlee/gitterrobinlee.gitlab.io&quot; HEAD:master</p>
-<!--{content_separator}-->
+	<!--{content_separator}--><div id="encryptedContentArea">h3CzsrRK10r14ax1IcP1pGBzcRlal8m1H3JKLfy88wU1Yd13Gj-EWE3o5cc3R-feUYunr3SlESpPjHb3-96Cm4P-YwCaLZTC_vlm6-peXrQTcTMvSKLiEBv2D1LlheSZ7SoYs6PiyhTXqzpduPmjv0nRiLgJv54CUOeFq7f1UhH__AlzrqtiXBDF4You1ltNoj6ax9Gb9MgUQDRtnSoUYakkcTOwrXH9coESNzE-JN_vccNlArFpuRQqOnqNC7sxFfYWkQEcgDhBD_0_l8r_Z_fqJGaNf2e-pmAY_micJVZy-KZcuBJgMRXtLReTMgaty2HQ-_tE1mAvxNHzzZojlkM8snPzK0Bj766aPdqmTVxydMHH6y8PixftiR7t2Eat9-8kWNniJj2JIobaN-azh6ZuVScLUQUt39MiGzCweat7JqMXsFrDgfEbSK6fHCL4xkzkHoOefMANR5-9i3LDwVu6B5BvPhVouVBJKUS0nTB49fKWhyzZTkJKgAprAh4cF02czrwS-hvbW2INJ8rRw0WispUkwlPsrB61XEfNv7h5PFyB4qN8vaFuTBzkqgCsRbwebKCysbV9SPS7KbJ5qxGrq_fM4GdoHZoozKm9OOzYcgI2i-reGNk5eqErzN8t-mbTVEIBLvnkslfU9jKEVhkzCRzpz9ice0xIqMSHJ4IXaWmkr6ETzuoQa_-hexctGF6uppb9jtaoHL8OgsQevC2jnlEhxMQdIdgIzpfxtpI9VeTv0D79-3zOBPzyINCOcVUvMRSDz6oUxx89UypXpUViUhBdLeEpqK5fUYOlT7sYDp-CU7iLyeMS0Yn4DHGoZUgzAokyEdg9xm0pHZNX2uva68yuN1rNbaJq1HhA5tBaPxPNj_XVa8sYEdexNt4iBuga2NjmT-BqwM3juhPOhZdV4HH3iqPRMPoYoQr833idRPlPlTUH_1I_G3IUnVC36nbTm7c8p7gy5zuoA8rwUoDIUJnSgaKMwGr4mIGZS43OLn-yqoKvL1i_TJx_4HTk0tYJJAj0j6q4P6bdOBuUSXSBLjJsHQDdnsfjVLAGw5JmuFNHp-KRV9tw3hgHZX8acShkCvMdm2uXViAa3BEWACjcZf2XvrXLMKhejNhxDdx1y1i2WjrKFOXEZDrrHXFXISaWcqw9yg2K7FPmx4UUNV7dUOgF3j-SCFxP4V4eOXfAGy34W5YpxHJZuUaa8eWsByF4ZipqhPi1IlVR6LTZTsIW1rh5_SNzbN6sXRF7LzA3RsMwvA6cR7ZAiXU77IY6Emri_n0gvUn5EpS6esldiK5ciZgTQQADtO0Z1zdGZabBXZP1JYhz-73eln0ZySI8GuCqvqPba1mDGjBnMnmkDkCBGlX7iCAim_gYJ2bwaxiOXZs_vYM9mxjPL5g3Sn3INJ4YKyRzU8Ghv7RStyOg_f_ZEwfN06mqQ-_KKR0ioVkqvsTSGe97--kqnNd8pu9n02cxwuZ9xNpwR5AAIXD6InzTv7u5kvOoMVB8Ux7FWt2Kw9_XEBL9qOb3YJXM_oofFMMc-vf3iaygZ_bRas_CCjdeky-lb-3VudFyi1PdqYvWVqQeuymoS5MiR2NczynDpogdhZoBkr_qaCpyDqOTis5PqeAose-6phmCJ06zq4okmHp_9TzpQktUrSNCiN5roD7OaGENcH_Y01c2ieR32yFNlp-Pr3RpI9fXNYBZQY0HBaeKOy3vs8qfNXQ7qyS-5MvZ3d6Q_MlIUryPsiIM49RCnymkcY392ycOq_mNNZMhduU-vn8jcMB_PBpusdeWo4rmsS5tj3-s_F1EBP4jjUXIEvyb1w9flVv7vV-cWVHGxFtThRiVw20lyjOP2cy99z9mHcqSVR99Ejl8oaNYOvAjNGaiZ3WS9ukxQ0jZgyYXGnuf4X_kn7bEYVhnmGqY3RvcKND4sgd9Yc_ajcVnLyBupdbCi96F9hZqU6sEzuM8jdQFY8cki5gJjmb0vCCh0XCDRHG6J3b3NVaOu2JorpxHfwL4monahVAMT70vU2L4FCsyfjVymaYUQXKuv2nNfcGLs0PFZ_e4uzfn4woc_MNG6JbQF47nms5jnhJ6g_949W8FCbYStBsJNG4VYv3JmB0tM7-ylC6VRZyRV5IFcA8XySdGc22doKEj9VPFDPGHuVdcXyVn8gd01fBvUALUPX_xfyKdGT_NxegzfQUnLnzoduEyw7-AVBWMvbHWIk5Jsjf0_NQceTlMQSPGF9ddquUY5KzLGz64oYmLkY-mEqeTqoTqJ0j78MLTplm-C0ZU_iYkHvzkQhxuePj5sPANXEM-VF9uiRyssLz6Z2tLuajnFaulg9R2wHOreJ8S-tSrBuVkSuYYEmm0gk8W4F5t-NWOMkK-l-Y-aGeB0GPceAitl4FjnpKIoRfjKWe9ydt4aDba1V1NCiyiBR1eUJuCAh5ntclEG6w7G6FBTPLWPWskO9e8DdtGARYIev4rmwu2lRc9gwwJ7Irfj3AB1DGgIErhPRf8H13e12QfpVXz2kJEDj9mcRs6KmTQsovfgpxhM5VjwFp1CBkcuQZDv9r-V9KoWxzYdYrNoeoGmSiqKQe1W2rR8w2wbJoiILYAwCF49NFMuCv2W2ONN_LphmukSixAGUq5F_YVg23KYyUFLkITwXh0YS8xGDjrwSifhOFk2N-1cbvUo2bgRnjdyj3Ml-saDMV7W0dNTEdKI61G1kNMPvjWl0wM71iTPhcE9LjZ2nXp62TLjJpDcPltc-Wq05Wx3IU8t36P3aWzj-1RB6PZ-R_3s0xyHHwSqoHcG45oVt3mVuXJZcQKQGLNCwojuRePNjzr30g07onrSmF_RalFnpFF0dHTluaSsKYlXFBYBhs7DthobIpl5f0WrxVPN06Vn4levOQ_OEV8JQAf1CCo2STq8z0zSAbd7zgEkve1vaT_RsD-YPkDN_jm3_B_DevDk5bTMQm2cdksrqu-ZwGvPjmGpqH6cdwX8v2PVVUECvAxVe_4khL_3ppvxUQOgOD-Z_VXVSadOtSAV0GXoPJxTqOD7Ubkp_kGQx4yl5icIHf5mz39L9BWBaeC46MIMeW_hzxtaye9LSc4V8y5lM9MiSqzajWMPf_z_DacH-tDujtWHAFXurMAOR36DspLt3RC7le0xs-8X0P0Xz-ykW6V5J7Lao832jRphGA7jwNDlRYk3_K-9cbAh9zasxpKypvITeSljipIdfRJ0Mx2Ax-ybnh3qsQqkbfqZjRrsI5IYjGnhqKngMJzI80p3GJ4LyhrcOX7W2ZF-Z_crODrdonhEK8O3tZegM6B1CH7QoM7HfcPD3Yv9fSxJtVZk5aQqv_vgnZV1OiG5nbVjVCtFb3eNM-62nvcMiTZnzJNFJQFtyTUQQAG6x1dyxtuZ9N9RXcJ6LFOJxCqVwO8Yf9ThhZT_2WoNKa3EN6c76j8Td6jjnB0Arq7Qb0uJhylJWhGug2Ral9E6rEU2AAv8t3k0m5LkiS_OHmrUQcNWP_e1TKeZ2wNrRg3dWXI4z39iirCk6MJdmQTRMpv00d6xBHujd2sGHvLVjoY8zxxUcD6skjIHMDVlgAzPMHR8gaqNkkNrJ46rbDU5awsI9Hxc9SlXHAsE_lcUZCXo0pheQog8_fFxjToRUmMxRQnizfFseXXCK50b4A0u9XHy8OCdt6eCaPy4fcjMYfZfU2zj0WYbNcqJCQkporoLHuu-hqU9UUNTxi3gtNN8SWOis3K5n5zWMc6GqYDtEvIEseq9Yj741BAL00GNErIHYfqn_6mY4EUfViG5eRG8nlP63MoBjYUWa7fPnxnJ_M-hdBw1p7koemvV9hECB0wP4ld8CHSBpi-8k_T-q_6ahYiXzg0U6Jf0uA6IFu-YyhsQ8VxaNn_nIi7sa4A-Yy9I0ZkCgbtUlyGpyaOwKU2aanl4slVNpo_uKkHY71_JMnNL0u0IjjC46D5j2b0tVU9X60vHjYEOBzf4XaflznCFe-a2XCx5q-WsCGSW5KWB8NByl7KMjpFwmCEGXtzPwTrDm3QNxdAD0cqUUPcj0669lJguhcWc1en5W4rLySAErz3GPbdvqJYeTnv0T0AgRcJ_o0LeW6nUFP4QAx8fRC_Wuyy03jHRo7vqGWmkSgCy6C9PAl5VuA5U7R-d2EZ502t3txusYdcrJJgJatBn9hUxpYinQ5n31DrARTU2M5uo6luZVxRkC2pEbNjztX2rXgvtPYzm3wwrY1NyeE-IFk1_uXHqIvgcaJG-ubytZ6hSdnwISpENDb2tT6_5BAWtJmXEwjNZBUmF-hNJ6yQwnAQaX7gFN1jrFEVZviX0yUpoV09IgHilOxiXCGpvfauPpEuJDTaK0poIpBWXQ9rdXcQorbYPYLc6s9ZtMnr1_vZFqzwRgx8Xa3WOKw1C684BJ2c1uFqVYOxWWN8AoOmdRch_Ubs_sD3MP8OdfkjFjpRyAQVW1N3OGKpsj-h3g-ztecuM1q3cfK8zRWktMhHhYuHmimLdKaxcolEVy9CI6auKQv398aJA-vvHpb-TuXGepPvQfiPEML4wrp74lo5vQU1VDjil6VWs8_b8RLY8LAv_ftXguBhGE7QmUwqAMLVOdFAULXmH5K7nQXgYaYor5lFYPfjZmHL4HVoadrQI5xxkP_7fmc5Y6y_m4U</div><!--{content_separator}-->
 	<hr/>
 </body>	
 </html>
