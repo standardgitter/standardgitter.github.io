@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>vps vsftp安装centos7</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">vps vsftp安装centos7</h1>
+		<span class="tpl_e_date">2020-10-31 12:09:03</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">DuBBDLj_Cf1tnnI6jk1U-lSpIyopQpR0FkW4y8NwICCkNv1D8J-Ft3kjjswcETjD4qFQkQYeuliBDZdzVIMYzJbHkmbm6U5JHq9WOT0oPoz0Q9RZqlGChR7uFhpfHxNeqZfZ4l_KZfk8Parh12kffvdX9YtOA7X64L8qxYauAaQisultsqus3aO263WnzJXe0LWxAmb27fp9zaKOAFCqQJFmS5yqLGLSNbmRSkCHoFKuxAbfBkddOqujyEHC7ZyfbwL4nOXiZyPUBAUdo-nY5JzbY9RIaw8KJUgSvw53sPtmxI30LcDbN20nMQBUE9riKNlKu0hiHOGvsi-oasAor4nmrkLyEUAnhd59Ki-ekQeOdYez2qYFfpMOz5rAnFq9nvu5FGoD7pCz6uU-Duae8eTy1IeBhQC0mNr3x9N8splbR_kVvtw80Ps5_eZn4YV_CbrQ4FsikEZM-UrAe8Te4GJoUjaOD4ka8Jq0bOrpX8IgrMgONs8e_kYxhWZYPlCKggsrO_L1DSxvxtx66dSWjHyQNdSS_irfcyZ_quulc2xXvwNoGJFQitf-_78b67jg_u4CUjiuHVuoFO6QBALD_sHjiO1uYgH5pVx2LO2kaBo_wrlKwHPhZXFDfnTiZBeZGr89uC-f9_XYYc_eNUqAeuFKg2zvxKv-YLm2F5nTbJnTdiL3Boa3_wu12SCniHdKXazxwUNjYt5Ct1GH1gute5QnL_M_ldKd84AzfGVgFtSaXpMIOaEl1SINpmhn78N0LS9jnvZn3859N84sXGZRcjq0j1WGbjghEg_NOQJ5R46DejgzQOc0dPyT47mKuh6DH9WHR8W3BmYHDyYuXaBQ6M84QJB9yZyRKZtRXVXdDayPznk6_Jnc7D8uJJDS9c-KaxB6Wv3v5QTfS5qYwx30eYVcdwfHXqcY71wspvcZasTGUuiXH4PG_KgHEdGeV7EzewmMYSrD7eDeIXcdU-EM7MQ91-pvGKmOHAFzwLHcZ1-yMbTs_dmJOuvDvSouW8-Lz3LlWtye6-Gw_uFNnH31aZny28rDZ2-NtPFYdiM6_KWwXkcvsrS6fLFx9OjX1w7b48yaGlmjYKl2gx01ea-ECOkUf9_g2qpbzKxyULyHEmwi8Nk12rxCmLcE5Vbka2g1Zh8tOdopz91p8lF4cN2jujmZtx4lPJ0009gHhEVY9Tt2PXQdVAhj2i3PP49Sa5bM_m3vJSoFg8DkooYRDUKqEcn0YQZBF7eM9Uw4P-GKBRcdqScf_vfjTf2-MAIsoCGU4IO5wN70A7u8Gczjp0Acx9nEEJPJx5hpGHvVMk29DpaY4-PmuLN3Q-ynn8EKspt0e0LYBnhzYMBsJ3bfq6ng6IUHBT_vKt7cvbVoCmYfIJXa2AneA7a8NH85-klGLzItdJgwAJfbffUHZMQ-jGx_UWt48x7c1fdF20S8u3X3WhtvPR_SoUK_neuX7DgH8kqHR4EvqfbCeANcH_Rq2tLAgKOSQIkgFxBOTH8qn8fq1zk_ozmVHk-itfw1ut_vXe1KXZyHzbGceV1VqonkgVMUGfwlwHnxLmaGbLgbRtzCchPsxmHQ5qLxEcWnSvmR7Zh2d2jCnyXAWPW5Tmk28jEPK0ZFhpdVPo0a2sZ6q-H8lG-Fwa2vtiF5bFZ6p91fD8jEG9zCD1v2B0Uy0RJtwHbz-KMT4nEqTJ00GeHPATM4VAmzmR6iYjcicMYrn9UoGlqnBrmWtoxoIq2h59sboqXsCu5IZO3RBfgIf2FZNpg7vn7NNgpZcxCicknjQsSyfNQeyNVqXuP8pYPWysVoEy4INUmMbI3Fmrm9n5m_GXGw_AooC9VR9wmhg3zf3iCvWo_hZrwacdStZSpza4Rh5uO-TBrOOULBkmiS6TXgkj_lkkXmFEM82gHBbmU7xdZdR6505aE2tq6pNaNWEf-sX8i6PccMRFMjcr_vnQsKmFyzrXc70g39Kr9PyLnPHb3T53VQfjPtaXyMGL2KTTRelFW7BlxYwwDgwB-_S2jgYnb-yGvoWTq-SiAPPah6rlysHNtxu6d4ejQR9Adp7PCzAfUyH13zYfMwVFihc6il0Z1_NO4YMe5NAqT__7vArhI75vBoucuPAdlEKttaQMuEboULDx3lR8kKypKVK7ojmFo3myvYwYLEeAQk_qH8DY9KmoeZAiYvB70qv1fxh45pE8T3Bdz0ngUUgbZIEhEf8PUc105owKWug3p7pl1jgXZGLvVkfKwfr-r_z8Im5jNxGvg5xQaphU_tGpxtpXULsBK-mjrZ5_9_J5XZmgprig3r-H1A9nPedxr4tWl0ThI5BJB3pfEcr9O9PjxXpslwaphRYn_E_0gyyPXfdsmtL_ZeKAyrbNCwOREbW_Ckwydh_GL5ZXgV4x9fqYRww0hIgrIookg9p2Kc23RTf1RJp68vXWJpTFORj-8HqVl3BrXHB7NPded9k78C5f5h8Ss0NIZXfBP0rI_Qh-y16XqkosL_gaDt70JTZmyF4cZMFGVoqyC-d6aH1FTjytVzekRMOf4JsoXXmYwaWxppbZ12wfUlRXgKEpsBWRGm7U8W5aAYwxf9AzeVNGI1_2iC4gZ36GpGhn8elgQ9uh4jrNDN93IrwG_Fio01JOR3y80o4Y52_8MWjvZ1ixNCZN0oVhGPZcwXVcxitaEwKfxFB5uq2lR-H3FBBnHOyr7OgQyUgB6g7R4rmhBf1br4_wReEmE8hUtOjpRXGfim2db1t193IxlFeAa9VFf9PlP4fjbqA5KQPDwcCNKc780AqskZITGSW8wBDyKxv_6YU_k93AUa59EbmlQNmbRNOwmBSI6I5kFnSC_TnXc6TCfWlpqi0ZZMYUk6oBFhRqpl6KoT4m7I6XMUt7_VM26iBrqOzYOKt0TxP35saN7bgN-cA4goJWw6rCiN5lQUJKjSqY0AZJM1_BcPBt-_SHWy8WMpMCgzZ9ysjPiENnwYvYOFmcJ8PJ1f3B7InTdJzVrwbCS_IHaZ0M1-i01_olIjnPe71Qb7KEM0EbvkFiTi0_BH6GiLzHYG3kfaljHITy3GJZFbgQpQvhJK304Qivc0wPgAjvL_nTs2r5iK2J0COyn-fiXkk_AHmCzzyhczI81rKcINksubcXDhkbeCCIQ9VRxFe9wzUs_jQsxrdpgau36Wnz3Wmn4Wd0UrGFtosb005R7CP5MlQhVeuQeTmDZmW7LVOV7GWbSLesfjx5jG5T7z5ZBuGeRLaTC9rgYLamR5qBjrrSIHQTd4r41zgZN7A3mzWDWM8thRQwZqVWkVi76Gmo0DTZaW1BBspkNDnOc3yiTFaDyYxd5wP6L4U05Jc5F51CIIQgEFvy-qM5hzPl4FU3_db9bJAHp7yuJCr_CR1uukN6qg_vyO9I3X5XFVeZKY4GJhMP3H90pgGg</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
