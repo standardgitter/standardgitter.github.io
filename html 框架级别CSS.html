@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Style Demonstration</title>
+		<style type="text/css">
+			body{background-color:#ea9558;
+				margin:0px;/*body 默认有margin*/
+				}
+			.clear{ clear:both;}
+			.main{width:100%;height:100%;font-size:38px;}
+			.top{
+				width:100%;
+				height:125px;
+				background-color:#aaf0de;
+				position:fixed;/*相对于浏览器窗口悬浮，但必须指定top left right bottom中的任意一项*/
+				top:0px;
+				text-align:center;
+				border-bottom:#8B0D00 5px solid;
+				}
+			.top ul {
+				padding:0px;/*ul默认值不为0*/
+				display:inline-block; /*使 float 的li居中*/
+				width:9999px;/*使li 不换行*/
+			}
+			.top ul li{list-style:none;float:left;display:block;overflow:hidden;margin-right:50px;}
+			
+			
+			.left{width:300px;background-color:#ea9558;
+				position:fixed;
+				top:130px;
+				bottom:0px;
+				overflow-x:hidden;
+				overflow-y:auto;
+				text-align:center;
+				}
+			.left ul {
+				padding:0px;
+				margin:0px;
+				}
+			.left ul li{list-style:none;}
+			
+			
+			.right{
+				background-color:#13a699;
+				position:fixed;
+				top:130px;
+				left:300px;
+				right:0px;
+				bottom:0px;
+				overflow-x:hidden;
+				overflow-y:auto;
+				text-align:center;
+				
+				}
+			/*************************************************************/
+			.b3{
+				margin:0px auto;/*居中本div  居中本质就是父元素text-align:center，本元素 margin:0px auto;*/
+				margin-top:50px;
+				width:500px;
+				height:350px;
+				/**/
+				background-color:#e8e9ea;
+				display:inline-block;
+				text-align:center;
+			}
+			
+			.b3_1{
+				width:150px;height:90px;
+				position:relative; /*垂直居中 top需要计算*/
+				top:135px; /*这个值需要计算 父div高度350/2 减去 本div高度90/2  */
+				line-height:90px;/*行高 使文字上下居中*/
+				background-color:#b54d3f;
+				display:inline-block;
+			}
+			/*************************************************************/
+			.b_img{
+				margin:0px auto;
+				margin-top:50px;background-color:#ff0000;
+				width:700px;height:370px;/*由于子元素position:absolute; 所以必须设置高度*/
+				text-align:center;
+				position: relative;/*为了使子元素使用 position:absolute*/
+			}
+			.b_img_img{
+				position:absolute;left:0px;top:0px;
+			}
+			
+			.b_img_text{
+				width:350px;height:100px;color:#fff;background-color:rgba(34,39,40,0.3);
+				position:absolute;left:20px;top:90px;line-height:100px;
+			}
+			/*************************************************************/
+			
+			.b_list{
+				margin:0px auto;/*居中本div*/
+				margin-top:50px;
+				width:100%;height:790px;
+				background-color:#779c66;
+				display:inline-block;
+				text-align:center;
+			}
+			.b_list_1{
+				width:150px;height:90px;
+				position:relative; /*垂直居中 top需要计算*/
+				top:135px; /*这个值需要计算 父div高度350/2 减去 本div高度90/2  */
+				line-height:90px;/*行高 使文字上下居中*/
+				background-color:#3f523c;
+				display:inline-block;
+			}
+			.b_list_2{
+				width:473px;
+				margin-top:30px;
+				position:relative; /*垂直居中 top需要计算*/
+				top:135px; /*这个值需要计算 父div高度350/2 减去 本div高度90/2  */
+				background-color:#3f523c;
+				display:inline-block;
+				vertical-align:top;/*顶部对齐*/
+			}
+			.b_list_2 h1{
+				font-size:28px;
+			}
+			.b_list_2 p{
+				font-size:18px;
+				line-height:1.4em;
+				text-indent:2em;
+				text-align:left;
+				padding:5px;
+				margin:0px;
+				word-wrap:break-word;
+			}
+			
+			/*************************************************************/
+			.b_toolkit{
+				position:fixed;left:85%;bottom:20px;width:160px;background-color:rgba(34,39,40,0.6);
+				
+			}
+			.b_toolkit_bar{
+				font-size:20px;
+				text-align:right;
+				padding-right:10px;
+				cursor:pointer;
+				background-color:rgba(11,124,240,0.6);
+			}
+			.b_toolkit_btn{
+				height:160px;
+				font-size:30px;color:#fff;line-height:160px;cursor:pointer;
+				background-color:rgba(121,12,210,0.6);
+			}
+			/*************************************************************/
+			.b_note{
+				display:none;
+				position:fixed;margin:auto;left:0;right:0;top:0;bottom:0;
+				width:460px;height:160px;background-color:#e9a655;line-height:160px;
+				border: 15px solid #B3B4BD;
+			}
+		</style>
+		
+		<script>
+			function note(){
+				if(document.getElementById("note").style.display!='block'){
+					document.getElementById("note").style.display='block';
+    			return;
+				}
+				document.getElementById("note").style.display='none';	
+			}	
+			
+		</script>
+	</head>
+<body>
+<div class="main">
+	<div class="top">
+		<ul>
+				<li>顶部标题1</li>
+				<li>顶部标题2</li>
+				<li>顶部标题3</li>
+				<li>顶部标题4</li>
+				<li>顶部标题5</li>
+				<li>顶部标题6</li>
+				<li>顶部标题7</li>
+				<li>顶部标题8</li>
+				<li>顶部标题9</li>
+				<li>顶部标题0</li>
+		</ul>	
+	</div>
+	
+	
+	<div class="left">
+		<ul>
+				<li>左侧标题1</li>
+				<li>左侧标题2</li>
+				<li>左侧标题3</li>
+				<li>左侧标题4</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+				<li>左侧标题5</li>
+		</ul>	
+	</div>
+	
+	
+	
+	<div class="right">
+		
+		<div class="b3">
+			<div class="b3_1">A</div>	
+			<div class="b3_1">B</div>	
+			<div class="b3_1">C</div>	
+		</div>
+		
+		<div class="clear"></div>
+		
+		<div class="b_img">
+			<div class="b_img_img">
+
+			<img src="data:image/png;base64,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" />
+			
+			
+			</div>
+			<div class="b_img_text">
+				文字描述
+			</div>
+			
+		</div>
+		
+		<div class="clear"></div>
+		<div class="b_list">
+			<div class="b_list_1">1</div>	
+			<div class="b_list_1">2</div>	
+			<div class="b_list_1">3</div>	
+			<div class="b_list_1">4</div>	
+			<div class="b_list_1">5</div>	
+			<div class="b_list_1">6</div>	
+			<div class="clear"></div>
+			<div class="b_list_2">
+				<h1>TEXT-A</h1>
+				<p>text text text text text text text text text text text text text text text text text text <p>
+				<p>text text text text text text text text text text text text text text text text text text <p>
+				<p>text text text text text text text text text text text text text text text text text text <p>
+			</div>	
+			<div class="b_list_2">
+				<h1>TEXT-B</h1>
+				<p>text text text text text text text text text text text text text text text text text text <p>
+				<p>text text text text text text text text text text text text text text text text text text <p>
+			</div>	
+		</div>
+		
+		
+		<div class="b_toolkit">
+			<div class="b_toolkit_bar">&times;</div>
+			<div class="b_toolkit_btn" onclick='note()'>click</div>
+		</div>
+		
+		<div class="b_note" id="note">
+			note : note
+		</div>
+		
+		
+	</div>
+	
+	
+</div>
+<body>
+</html>
