@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>linux curl命令常用</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">linux curl命令常用</h1>
+		<span class="tpl_e_date">2021-01-03 07:53:48</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">97lqOabWTUIZ1ms0vflaq2e-Icdztwbw3g_ORrSA8zsVmBM16RSwF-wIOEoZMp1gldmu39wBKk7oYtru8-ec4bPnlQZAzPUv6yhnYbnz6I5RzuX1-P1Y1CnpzJ9Smp4YBW5eScOXywnjnlIT6MCFSbxGMS0GSMGrIHBve_yXpt_jc5QheeM9_tJeP7JaY_Z4K1PJ-EM2CCKU9jBO8sSU8LLzfsweUQ6TNYQ-3YxWHqWyzfXeQ7U2Sprf4PcBWKQJSDJAYlLu8xKNX0z1FKNyXIppAPx5tjponW2d4Ozgl8xeDdFQOqRqwnVVRtxi9IPb4tOP1ZXmvFe28Aubpmkp0b7OtxZ4dYRME7Dot6cTcgSRWEMrKpDIdXoWw_oVKPnFzi1qdPIyGIQGzcdg-6amCfnVYMHFLuRVESXv0b5UIUeiDYCDCTzBU3-sugMhesBBoGlHXgnGWlphm-UeSPFELi5joTrM4IQHjt2r2-fExbp0VnKRXuo8kjU1wO6emqOnEKvpcjjG07Po5T2Vf8BQKkMRW79UAxEOYh6DEYk7IKd_YKBq682MUmm7knBG9oNoUfTBdAgsEsvwpuzYHMRGbNrc3jYDrDwpFgCxFu-j3077Y8_flWV_lcNrq74xYBtKFEAXpwTXR2FFx7wZLg2rnOI4PNCgKtFSwuHAqnayZsWuCZodsTFWwUSD2gBrX7WE9BORkwNaia1EjDgUCQF1QSU9pK-uWMJAd9sknvSVQ0Noz-ZOJWEnzxCG8wOCT8o73nsseA_7NTHM7TmHLDqyV4ZVzGcaqdcAjUYgKkppj-TT92WzS34-acar8WHYfjB0rmrhptB2C33AEuCKZATIf3UbJ1NAbO5pEwKBzTgdELKU2jFItxtHeJdAAtWczADE01fWxmIUu2LVw6d46kAKfT_LuzriWq6BoV-gEZSeeUzVAHdah0tmTvIR2vg0wJ4M-xA2RTXJycQXbHP_J8KwXRtarzbOG5AMoLuSl0pxfzl2Y35updNhXUE2ecZQPe9_YbL_IEyqW82YG1mLyNKnpWgOEmChCGm3T84Pgluqm5YXCVKf_Hc5ZVLOZ078Rs99UdhSIjDlXcnrR1jVALmXZnvG7LEez2pMdy1TH6EYqklcdt5JCZo51sm8rrUWIzXE</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
