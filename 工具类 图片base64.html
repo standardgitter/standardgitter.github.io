@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>工具类 图片base64</title>
+
+<script>
+	
+function addImage(){
+
+	
+
+	var file = document.getElementById("image").files[0];	
+	if(file){
+		var reader = new FileReader();
+		reader.onload = function() {
+			document.getElementById("content").innerHTML="<img src=\""+reader.result+"\" \/>";
+		}
+		reader.readAsDataURL(file);
+	}else{
+		document.getElementById("content").innerHTML="未选择文件";
+	}
+
+}
+</script>
+<style>
+.main {margin:0px auto; text-align:center; width:100%;}
+</style>
+</head>
+<body>
+	<div class="main" id="main">
+		<h1>图片base64</h1>
+		<hr/>
+		图片</td><td><input type="file"  id="image"  accept="image/*" onchange="addImage()"/> * 如果没有反应，刷新页面
+		<hr/>
+		<textarea cols="150" id="content" rows="25"></textarea>
+	</div>
+</body>
+</html>
