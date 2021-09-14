@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>linux DNS报文分析</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">linux DNS报文分析</h1>
+		<span class="tpl_e_date">2021-09-14 04:36:34</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">QUxyTEFFanUYE91x39LQLPwpnGuLJh65PTms3ju20PvLOPXRCgetI8D1BXKIawCBmGphnu1y3-UJt258GeW3efSb792mBaHfUM2nXXrWPv_GoH-4a4jrsfG_rpfCE7YfxhvciFrxsK3H1ZBEIv4AeB8C4Y_rLvisbHkuAQKitRpg2Jd7JracgYd8uqUBwrxJk7rBCTXvZfGEvbnNJ9SQM_24LElNYa0JPg0k7fWCyKuDluHzpl4MjxLzZ1ZmjOROIxvxuyZ1CIedCHHwEACBuxGVGXGG3-jBfxJ99KTJNx8EHOEDb0j-4jEinIVlPuPRDUkPiACTpiwtIDYr4BpoafVEYVhxzR-4QQMFVuKImhhWXlpe0uj0FF1PPqXspu3ZLJtfGYpquVmomvZdnpv2ArYh83Aid-IkQh40kXh0vf3_3wHfXLkkWt5Ox5rh3e5woy5EZgw7c8E-TisRw3OrzLVYMLmL9QnnBtsRrqL9_kU7xvPk2Xg8xNEEK1jqOjHwYzW_EPIK7TAWbrsU_fTonW80OVqGLRgEBAvHuO4tfF_Lti9gEUbe3-VT0yVg3SqYWDc-oCZb7pNWzX1XzS-T9LDn5Slpep8QtmTUyrsEdjRTOSjCidnwzvblpxaLTwAr9AAbBy1UBhdblWvAaZbZWuxyq9zRyed9ajS-N4QRT3pfqxFhkGGb4wYN9ad8lbPz28n0EdS_OUVpHoZ1Bf_D-beUfyYLpnjmz1Z3v7rd_aYI7dVLUYpVDIAO9swy4AUMFiF1vAQiY2Q-CHEuUSnh2QTS1tbAaXGfSMFiFhse4UvyGQRkcveJbqoxu2ugT54tAlqAaywoQf11SFTysGuM2qyCClwChugIKZUxG_71bF9JYfFSH3oi4v5E8H0vCcu-LuduC2jno4uyBigy8rbasB-4uvp6ZGD6blMyx3A0O4-6L1gpRpeD8cY4s1lWZPgXFnQSUk5yesX2H-tTWJf0xIHnGN4alhcoDT-ZU6jF-_6UrSp94i2UDyoiCsBoEP8ZIWTgEvzbJA_mBczRVFLXJoBbfCr2A6j23VqMbnV8x8PyDrmfFVfLXNStpG3AMHvGLYIu5pFDSQh4TIxpZTGfA-UWTGlhQhCgkF6WgsiPp9HHLPCv1-Pjk8sRXmitTroGEizpKOkxCy5VWCp4Q9Ery4wSR250d5wbJUZA11q2PQTwGqlBt_qBlicZt47xnmExtbXyR5EV_Qoe_5GwPDssnaf-tuOvzm9zcg9sHORzmmXpgRkhBSn5N3XZPgEoVCVJghfSEPw07CbZoeZdwFi1P3zMt8-ln9a1508YkRPvPrkBa3vf1HNLGa51sah-t4gJdBZQ3YDkL_WOlHYRgdGCoqx6msmCxHFJUEvJZDtP4VwX0BtsbQPjMzU3jdwsP-8Q0hF3CDhIgefuU_EZ5MIVvYrsA1AScEL1nCKawt1scV5EtKKWXO8cQIPGVV0QRwcolgXzYcyYk3tgE3F-giH242DasUz5Ns1S3AeijmvzKe47VDessUUZKC47L7O-guI3m99oehEislTk5yGGOySmvEWCJVcc47DxC0ec7mrBB22FO_9ZWzu3XRVnSHvzJshZKd06gC4vWBHWVGbEwWgH1LFu1faQkwnzmuvXzYU0UqCHZpIl7izR0JpAXC9CtplrgrUk0u5Ht_ZtUme4LPti_VmUT-BiuLk4KvCgWSze5SfMIeWsvl4oK8NL4OjsM181ixuwMp00cWUdQx58-hZpJ8d1Mt7SYqalLyFAcSH2kYZqY7pgroGM6bDZvH5rs8QswU0VRijdUM29LoQ3ee8jIildyW1hafQ08vkDstfSVsmUBLq-0rlinGekqyYNaENlR8VQ7dnjn-6jiKY2G6DyyUCuEV0S99sX_8xh1LkW1_S13VUBGmrhaw-dd0Aob0kyVEKTJOC47CsIZG9C7BIkL7M4shabjnbyasU5C-Fagqb8pFUkhcrbBiTRws8hYp6I4Id1zUQsgZpw6CbItYaK8KyLlqoMEp8_vG5-ItKMt32rR6Rn70zH4jdLrRy5q4KirvT6jbxbaIS1CR7Zix7ID1z8KLtJYb2V4OX-ukdQmwtkfVMaYvvFIEqjM5BDWxGAfWtB6qqYbh2zdVgpqLnVPcKEXK9NK2oZkdqoc8FwwDOJ12nrAquLFqqSEVIAKA5h10P6E5GSfiy9T3Kk5j1vNj8gJzDk4lhKMADRQtU1IJzOQX4v_22s3ylcWdnMUmA-m1gYk4XL7xjI5Nwch3N_p9vQ4RN3Y5wluNCcyRNNrnlmvOrUug5AX8xsPZgfJ-_FK7VVR9qP1gMbzCuW2i5TcmG4x4K1i-BZCizVQzgLg-BAsEkoh97ps14Zngbyp-YadwDn9eNI0NldqoUz1ELWgRmgQReAujSs6qnv8nn21G9E0rLd-mPW-hh5SDGd_keo0QTqsW7WsJIGxapHoppGeXyCtdKmwB8gOYIMkA3Hq7VjS7EB879b5V6XhRYE1B2jDT5orgi-tGCA8cDFfdP9CHbDkAxsvQWHu2BGxcGePJpWRj07tgjKVEgAi53-2LnewPrz1C9YYz6qPsvZkMB2RDRN8ypW3VP6xo_cpe9XoNlmABk4EeYAqS6OQP_Zsrzg0fSTf-2C3go-uJdJAzmYC1nb3WG7ZiohV5zDyNZWK6n12HZntromVxqL-ALxSTXsfREl8sHe8cGF0wF2CvNDyBzrsClGeqIQce7-xHmhj8_-SNsIoYzmORWJfJ_tR-kp85TzyeeecYzVutBc3G5iGvAiNT2lNlwzR4NcXcOHBWVEk4tkvYBMIXI4cgTfQ8Hkh__jF2vNr5DyT8AKyBuaTZ2-oOc_XWMvxYk0xZUoIASgp_Q1DEx6yYsTYk7jIOsLKvooLV4crzgz7xQU0Mxj3uvs8su0jBHbCuqu9jtpwLcVuhdx1ZqvXXzzmxrnuKkCaxRB4ytI3fBH0eu-VWdYvCrJoeNVQ_IdzkINwAh_6eWzvx1DP1R7gnFsBR-V8T5eatVlRYbQXlsD0HHkA5WfbVylXEN7xoyroycTphYNf8i_p_L4NW-TyySlnoUZpYnSfvuSxoVt4uoCV_aoz8tjv8D3smF6r6dQJvTHdnzhh9OG4DgoQs1JFLX34vNmx-0e0sUr2IGsjiMvD30OFCrDo2gooTh8l2THiOh9CyhJ6Sim_PxvqoRMijaS69UMH-TXh1WJYf8UEHtL25l0LxpOifMqnPYIQVlbrvTj_ypyH5lhDdPD-n1Zz4Lbj3O6t-Z3NEPVHMO3doeUjf5gLeBJcmcfCok-wbPa0NSZDhtXpPL7U3_wIJsYrzLJ7nrKJU6M4dcC3g0N0PAKxbhwis_qKTykvgJZeZ2QGdnlCJqusel5n4oEejsqO-FhyzWsyY5C-0e5CazNm3WDZB8hfakeySdhi47wxRGX8SSx5aOGxz8lojxjKqSLUWXtNlwxXh3TUpuwITOxQGswCk288dZoeV-JKFIjVFDEjpiEPlPzeCp6qJVtt6zy9q0QBYrDgztAF6B9kPgGWt9v7_vnZ7ha_Dh5PyQMB0-lnsQH32LDk0tiVwwYHMvvTR1LLuHiyLjXkITPQrA_aU8m3MA8pGnwRTiGuFA-qGB2g7HGzIWKYcYLiHjQwKwVDGEEPOIyrRSmE7rLCbF3ptykoS9siG9w4-04-7Uq6X37OGAnZNNKtrCxvX6O_46b1VjQW1T7mwJUqOfQvVDkJIlK0qsljsu7R0_zc1m7lkuTzaM8LH0s7_Q5tTsVSD3yA-WwcTUMoi6u-BvKXXmdZFvNaKOKQATTILJ2ucIFUUSgSFe1UohRs_Zw2_A2-dBzudJsZmDwneMGfHR10_rIlUG_tX__mxsgXz5uavrKeUDYf_J2aKSVl-B9j-PIO71cKlqroUqfSK5raLG9mNV8aeow6ci4z2O9yGPQ_ggY5KDl663cnV2KZ0T2Wz3bJ7NtnSAlA9qmC5eWQ2TCXNZdij55JQpcq_kMJEbUCdcZfQIFejSYIQdkodcd7mGILcNRFSFkYYmpQi5YwnJaaSG1RF98e-Ra7Js29WiRnxlYO9Hl5fAo5MunTYo0EDkCLGP554Mh2Q1g15qgeAMuXpT9fGBRbjTqKrHdY8Hc27OiGyEZ4yyC9PGctsvbkyH5CrNAr0Hwe8GNPiw3x49Dflxe0Sk6B9qJ_TMf4YDLgA4MLeRI2t8JxrCroaMQFHN8afiu8PXv6CZSwe61RLKXCXLtKrQaaL35Yzs9eVPu68PEj0E6QGsNVeKCQqLn9P27I9aGDLMgfl7Ew0SOYrWFNsnRmG9q8s3VQLD1R1y7IoLzoHJZdhozUf89H_58LWzo_AQysd-aYe4TkaWVgbNc57PTmfx29-xPmFWxpSTGBMqSDdmICXt-kzzOTxTVyXISHtxtJ1vfC0-QfSCEInD4jHJGbZIJUWS4w1NDF8OBoQelETBnn5sbwH99DUkUllHeCrznJVRHqt7f9k9p5TjuYtzBy7PCm9eIT13LEJOxWLHj0fEhn3RuLo86F82aau3jZsg_Jr73Hgnfv3i9iZC1KJAqnDUHpuMPns61W_zYXYBKG4V1MD4SJbvqQ63_eb3krcR0YnkHrVfskefqbsvgSmP0cdwGpRRXMcg3HzV5CtsOwsEh_sk62zpMacpQ2UV3ZytXWpe2nhdKokVf84AR8gECx_5hxxLg-xz88k-3d90BwiPNOQ4-4mYbkzKOdtLtU0tfUYxNZN4534V33OL_Lf96BUitWBgRFxE7H3xAc_SQwEExaZoEg94QauQom83vmXx2pQJfT1o6581BsF9fZ5Lr6wDQgDkETB_slZiSacVGU25O2PAcn9rHuufKklW7voI_onVZviAMETauOo0bavtTeCYLmaX9bruIGfOfMokL2fCbfCIEkCFoSvtRL2Dio9PHajHkLMjQR2uL75O0OpccxvOAPnX-7R99dVUKqKBmE7oLHNVsweb0l4WDs499d2w8SqSTMLlEmlYRK-25p7KSbqdnlHBe5xkZspoAhkTLJbDEoWK48g95lkOhdTpILRtQKckvH5nt-5iooIMhFVFMW0jxHIP3BtGhkLF9_4ZyMyRKFk4WUsTvknQWqTL5vUIvPrzazqrbJmd6f3XKHic1Wr3URNxIzOaqXzPRX-HAd1WJQdZTHnr1AbFwKCLmnk6JC1EYuoODBnB6dHWtsJGiYDDYiYfgbA81P6A0vWwFkkFci9VbVnEZk8DvBiJRzZnchk2VtX_leiHp4foxaJAcgh2STukjo1H69q9DnirylRzRJw5v5O6LgLV8p1CnStmldj0hOsSP5phnp4hTQ7pDeummlEKX4rOjZuDCHOrFN4VGyPsZqllEdKZI26gtJFeNeN9bDfkvf4MnVKqnmhhB4qnRD8WfIr-NhWKpVywR_9bBaysBs9XHwNsf8NLhlte7k6wirp_EU97PtBQ4Y6gTGmk8UNfASaYHloHCxQdNKnND--sSp-eNap00mGypk_Q1ytb45Il60oguLGQtdJ58mA1mjGQjipMfqsOSuNdH_ZinVUFn8FFTnR4MKdmIj7bBXbfifHykVsCd4J4NBXBMCZ0h9_7PmYbYvuMdmDlM_v670PqHXjXts-ljwmBFayRRg8lWktw-dEkvWDMBbXaAn9YAQ9CrzOr57eFgBBhLNzTZOHQzeAJVfn91Ay7AZC1fzXqGi2JnhwiVcUKiFcO7dgbLBDZOW3WBhYmLnLYKhU2HMYmH9qhj4JOk7KKu7qLW-eZ6uwK_Kpxav1lkZJ2B3CA4EMIkdxgzzQET9Mk6YYtkIvG3j8ow9HRbMESSkoaDD2WR40iviOSu6YFHgxicxBtDhVVZIPXRyWSAqtWpr03nKD1lKlo_oHHn1UPgLap8a529bexisoUUKWBlI6dmYtKdk0uZlNKC7djaM8CZB6ogN_IfDDnOJQzPREIxL8LGxrKTWf-nnDNZaDR0RhxxIi3syXZmznbqtmewFkayuVL8r928BuUBsWk1wRUxKhWsz4MlPp5Zo8mrR3GsyS2KmmtQPna0z0E_8EKBg0fyXiL7DrQU93iTfRBULO-u8xZqlmbwLwmZMX8NAh0OQ5wmynB6tLWtunjONLcLGnYwk5orh4ErxMzWTO0YYXod_l4wEw60XFV73atKsXkItpkzb7enmEX8XEg1vM1h2U0vvuTjapwpr1KlgrUvWZDs9BfeA9N-nv9IuAt50028Ro83N506mNv7t5EnQAUo9LYuMqlOd9rdBoXq8iJbex95hj0vckq1tRPw9rkTwZrd9w2Lmo7ubL4qo8cAUuA_uFPeb28r9Kg7YaY7f47IEH-ZjVK9xluHj9BlzcWsAHsFhnnQkEGe9XzYKnN7mwYehMKZuT_TfR5S3ENAB4PVzqBxu94YfXJXaboT1qrNcBIZXMv4yXJYSdh1VmP3Qnnx_RgWnaSwDc271sRzMRZbXKTTqpd4HpO9HvLaBh_fx08kndO-004nje1FORP1hy3YzBzkTLsi-DLF_klFPcXRNXvH_mxSssZEbHkFQJdqn6e9B0qutb-76ldTzyt1ZGTNtf2yqTLCMF_S5H0p0lOHEjcHW3HxdcvwPCAqmq4k2rObwqx8HPCXvVAOX4W0rRJf5W21ztfVPYd8-q7dX08k-82QkfjD7M-GNm6dBHPul9pBElE6EAcQicXagK-HM3INahGQPA3XL-LVXCwh2_MWr7VHwbOTG9F5yKb5M_6CI1vf2xLGRTwHMhR2eOQo_NQ8go-11O26dBgmJcyNBNkFJgsBzEs87MyK0NreSM96lD4kY1orB46lmp35ovO6MxP2nXmA62_GpRkR9-jphX_TVvROIke78KSKys2DPOO1OBH2DQI4UzGAqXdlQVK-UWv40BO8cuha-hN0sJSQKlfNQPHrrouZ6i-ftnZrJoGt_KU-TuHFMD13preZT4I_ordA0i00Cj5Re4DlstEK890FMKk8q6oGRc5I8UOHY4bhiDmqpYHY4kRYFMXimsujZ340OUpo_FlZq-IZMaPcycc2aFRAjEa7FZvUFbVHzgZ5</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
