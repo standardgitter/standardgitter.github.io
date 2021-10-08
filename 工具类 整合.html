@@ -1,0 +1,655 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>工具类 整合</title>
+  <style type="text/css">
+  	body{background-color:#000000;
+				margin:0px;/*body 默认有margin*/
+				color:#ffffff;
+		}
+  	.main{width:100%;height:100%;font-size:28px;}
+		.menu{
+				width:100%;
+				height:70px;
+				background-color:#8899A6;
+				position:fixed;/*相对于浏览器窗口悬浮，但必须指定top left right bottom中的任意一项*/
+				top:0px;
+				text-align:center;
+				border-bottom:#8B0D00 5px solid;
+				}
+		.menu ul {
+				padding:0px;/*ul默认值不为0*/
+				display:inline-block; /*使 float 的li居中*/
+				width:9999px;/*使li 不换行*/
+			}
+		.menu ul li{list-style:none;float:left;display:block;overflow:hidden;margin-right:50px;cursor:pointer;}
+		
+		.function{
+				background-color:#000000;
+				position:fixed;
+				top:75px;
+				left:0px;
+				right:0px;
+				bottom:0px;
+				overflow-x:hidden;
+				overflow-y:auto;
+				text-align:center;
+				vertical-align:top;
+				font-size:0px;
+				display:none;
+		}
+		.function textarea{
+			width:49%;
+			height:calc(100% - 56px);
+			font-size:24px;
+			color:#ffffff;
+			background-color:#000000;
+		}
+
+		table{margin-top:0px;border-collapse:collapse;border:1px solid #aaa;width:100%;color:#ffffff;}
+		th{font-size:24px;vertical-align:baseline;background-color:#3F3F3F;border:1px solid #3F3F3F;text-align:center;padding:1px 1px 1px 1px;}
+    td{font-size:24px;text-align:left;vertical-align:text-top;padding:1px 1px 1px 1px;border:1px solid #aaa;}
+    
+		.param{
+			width:100%;
+			font-size:24px;
+			color:#ffffff;
+		}
+
+		.button2{
+			width:50%;
+			font-size:32px;
+			-webkit-appearance: none;
+		}
+		.button1{
+			width:100%;
+			font-size:32px;
+			-webkit-appearance: none;
+		}
+		.textinput{
+			line-height:24px;
+			font-size:24px;
+		}
+  </style>
+  <script type="text/javascript" src="js/sjcl_tools.js"></script>
+  <script type="text/javascript" src="js/csct.js"></script>
+  <script type="text/javascript">
+  	var waiting = "waiting...";
+  	function init(){
+  		document.getElementsByClassName("function")[0].style.display="block";
+  		var menus=document.getElementById("menu").childNodes;
+			for(var i=0; i < menus.length; i++) {
+				if(menus[i].nodeName == "LI"){
+					//console.log(menus[i].title);
+					menus[i].addEventListener("click",function(){switch_function(this.title);});
+				}
+			}
+			
+
+  	}
+  	
+  	function switch_function(f){
+  		
+  		
+  		var menus=document.getElementById("menu").childNodes;
+  		for(var i=0; i < menus.length; i++) {
+  			if(menus[i].nodeName == "LI"){
+  				menus[i].style.backgroundColor= f == menus[i].title ? '#8B0D00' : 'transparent';
+  			}
+
+  		}
+  		
+
+  		var func = document.getElementsByClassName("function");
+  		for(var i=0; i < func.length; i++) {
+  			//console.log(func[i].id);
+  			if(f === func[i].id){
+  				func[i].style.display='block';
+  				if(func[i].id == 'timestamp'){
+  					var nowDate = new Date();
+  					document.getElementById("timestampText").value = parseInt(nowDate.getTime()/1000);
+  					document.getElementById("timestringText").value = nowDate.getFullYear()+"-"
+						 +(nowDate.getMonth() + 1 >= 10 ? (nowDate.getMonth() + 1) : '0' + (nowDate.getMonth() + 1))+"-"
+						 +(nowDate.getDate() >= 10 ? nowDate.getDate() : '0' + nowDate.getDate())+" "
+						 +(nowDate.getHours() >= 10 ? nowDate.getHours() : '0' + nowDate.getHours())+":"
+						 +(nowDate.getMinutes() >= 10 ? nowDate.getMinutes() : '0' + nowDate.getMinutes())+":"
+						 +(nowDate.getSeconds() >= 10 ? nowDate.getSeconds() : '0' + nowDate.getSeconds());
+  				}
+  			}else{
+  				func[i].style.display='none';
+  			}
+  			
+  		}
+  		
+			
+			
+  		
+  	}
+  	
+  	function urlcode(t){
+  		if(t=='en'){
+  			document.getElementById("urldecodeText").value = encodeURIComponent(document.getElementById("urlencodeText").value);
+  		}
+  		
+  		if(t=='de') {
+  			document.getElementById("urlencodeText").value = decodeURIComponent(document.getElementById("urldecodeText").value);
+  		}
+  	}
+  	
+  	function csct(t){
+  		if(t=='ct'){
+  			var cs_str = document.getElementById("csText").value;
+  			var cs_char,ct_char;
+  			var cs_index;
+  			var ct_result = ''; 
+  			for(var i=0;i < cs_str.length; i++){
+  				cs_char = cs_str.substring(i,i+1);
+  				cs_index = cs_dict.indexOf(cs_char);
+  				if(cs_index !== -1){
+  					ct_char = ct_dict.substring(cs_index,cs_index+1);
+  					console.log(cs_char+' -> '+ct_char);
+  					ct_result += ct_char;
+  				}else{
+  					ct_result += cs_char;
+  				}
+  			}
+  			document.getElementById("ctText").value = ct_result;
+  			
+  		}
+  		
+			if(t=='cs'){
+  			var ct_str = document.getElementById("ctText").value;
+  			var ct_char,cs_char;
+  			var ct_index;
+  			var cs_result = ''; 
+  			for(var i=0;i < ct_str.length; i++){
+  				ct_char = ct_str.substring(i,i+1);
+  				ct_index = ct_dict.indexOf(ct_char);
+  				if(ct_index !== -1){
+  					cs_char = cs_dict.substring(ct_index,ct_index+1);
+  					console.log(ct_char+' -> '+cs_char);
+  					cs_result += cs_char;
+  				}else{
+  					cs_result += ct_char;
+  				}
+  			}
+  			document.getElementById("csText").value = cs_result;
+  			
+  		}
+
+  	}
+  	
+		function timestamp(t){
+  		if(t=='t'){
+  			var newDate = new Date();
+				newDate.setTime(parseInt(document.getElementById("timestampText").value)*1000);
+				document.getElementById("timestringText").value = newDate.getFullYear()+"-"
+						 +(newDate.getMonth() + 1 >= 10 ? (newDate.getMonth() + 1) : '0' + (newDate.getMonth() + 1))+"-"
+						 +(newDate.getDate() >= 10 ? newDate.getDate() : '0' + newDate.getDate())+" "
+						 +(newDate.getHours() >= 10 ? newDate.getHours() : '0' + newDate.getHours())+":"
+						 +(newDate.getMinutes() >= 10 ? newDate.getMinutes() : '0' + newDate.getMinutes())+":"
+						 +(newDate.getSeconds() >= 10 ? newDate.getSeconds() : '0' + newDate.getSeconds());
+  		}
+  		
+  		if(t=='s') {
+  			var newDate = new Date(Date.parse(document.getElementById("timestringText").value.replace(/-/g, "/")));
+  			document.getElementById("timestampText").value = parseInt(newDate.getTime()/1000);
+  		}
+  	}
+  	
+		function hexcode(t){
+			if(t=='h'){
+  			document.getElementById("hexResultText").value = sjcl.codec.hex.fromBits(sjcl.codec.utf8String.toBits(document.getElementById("hexStringText").value));
+  			
+  		}
+  		
+  		if(t=='s') {
+  			document.getElementById("hexStringText").value = sjcl.codec.utf8String.fromBits(sjcl.codec.hex.toBits(document.getElementById("hexResultText").value));
+  		}
+  	}
+  	
+		function lowerupper(t){
+  		if(t=='u'){
+  			document.getElementById("upperText").value = document.getElementById("lowerText").value.toUpperCase();
+  		}
+  		
+  		if(t=='l') {
+  			document.getElementById("lowerText").value = document.getElementById("upperText").value.toLowerCase();
+  		}
+  	}
+  	
+  	function aes256cbc(t){
+  		var key = sjcl.codec.hex.toBits(document.getElementById("aes256cbc_key").value.replace(/(^\s*)|(\s*$)/g,""));
+  		var iv = sjcl.codec.hex.toBits(document.getElementById("aes256cbc_iv").value.replace(/(^\s*)|(\s*$)/g,""));
+  		var data;
+  		var aes;
+  		var result;
+  		if(t=='en'){
+  			document.getElementById("aes256enText").value = waiting;
+  			try{
+  				data = document.getElementById("aes256deText").value;
+  				aes = new sjcl.cipher.aes(key);
+  				result = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(aes, sjcl.codec.utf8String.toBits(data), iv));
+  				document.getElementById("aes256enText").value = result;
+  			}catch(e){
+  				document.getElementById("aes256enText").value = e.message;
+  			}
+  			
+  		}
+  		
+  		if(t=='de') {
+  			document.getElementById("aes256deText").value = waiting;
+  			try{
+  				data = document.getElementById("aes256enText").value;
+  				aes = new sjcl.cipher.aes(key);
+  				result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.hex.toBits(data), iv));
+  				document.getElementById("aes256deText").value = result;
+  			}catch(e){
+  				document.getElementById("aes256deText").value = e.message;
+  			}
+  			
+  		}
+  	}
+  	
+  	function json_format(){
+  		document.getElementById("json_format").value = waiting;
+  		var str = document.getElementById("json_string").value;
+  		console.log(str);
+  		try{
+  			document.getElementById("json_format").value = JSON.stringify(JSON.parse(str),null,2);
+  			
+  		}catch(e){
+  			document.getElementById("json_format").value = 	e.message;
+  		}
+  		
+  	}
+  	
+
+  	
+  	function base64code(t){
+  		
+  		var url_option = false;
+  		var radios=document.getElementsByName("base64_type");
+			for(var i=0;i<radios.length;i++){
+				if(radios[i].checked==true && radios[i].value=='base64url')
+					url_option = true;
+			}
+  		
+  		if(t=='en' && !url_option){
+  			document.getElementById("base64decodeText").value = waiting;
+  			try{
+  				document.getElementById("base64decodeText").value = sjcl.codec.base64.fromBits(sjcl.codec.utf8String.toBits(document.getElementById("base64encodeText").value));
+  			}catch(e){
+  				document.getElementById("base64decodeText").value = e.message;
+  			}
+  			return;
+  		}
+  		if(t=='en' && url_option){
+  			document.getElementById("base64decodeText").value = waiting;
+  			try{
+  				document.getElementById("base64decodeText").value = sjcl.codec.base64url.fromBits(sjcl.codec.utf8String.toBits(document.getElementById("base64encodeText").value));
+  			}catch(e){
+  				document.getElementById("base64decodeText").value = e.message;
+  			}
+  			return;
+  		}
+  		if(t=='de' && !url_option) {
+  			document.getElementById("base64encodeText").value = waiting;
+  			try{
+  				document.getElementById("base64encodeText").value = sjcl.codec.utf8String.fromBits(sjcl.codec.base64.toBits(document.getElementById("base64decodeText").value));
+  			}catch(e){
+  				document.getElementById("base64encodeText").value = e.message;
+  			}
+  			return;
+  		}
+  		if(t=='de'&& url_option) {
+  			document.getElementById("base64encodeText").value = waiting;
+  			try{
+  				document.getElementById("base64encodeText").value = sjcl.codec.utf8String.fromBits(sjcl.codec.base64url.toBits(document.getElementById("base64decodeText").value));
+  			}catch(e){
+  				document.getElementById("base64encodeText").value = e.message;
+  			}
+  		}
+  		
+  		if(t=='img'){
+  			document.getElementById("base64decodeText").value = waiting;
+  			var file = document.getElementById("image").files[0];	
+				if(file){
+					var reader = new FileReader();
+					reader.onload = function() {
+						document.getElementById("base64decodeText").value="<img src=\""+reader.result+"\" \/>";
+					}
+					reader.readAsDataURL(file);
+				}else{
+					document.getElementById("base64decodeText").value="未选择文件";
+				}
+  		}
+  		
+  		
+  	}
+  	
+   function random() {
+　　var len = document.getElementById("random_len").value;
+　　var chars = '';
+		var radios=document.getElementsByName("random_type");
+		for(var i=0;i<radios.length;i++){
+			if(radios[i].checked==true && radios[i].value=='complex')
+				chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890`~!@#$%^&*()-_+={}[]:;"\'|\\,.?/';
+			if(radios[i].checked==true && radios[i].value=='string')
+				chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890';
+			if(radios[i].checked==true && radios[i].value=='hex')
+				chars = '1234567890abcdef';
+			if(radios[i].checked==true && radios[i].value=='dec')
+				chars = '1234567890';	
+		}
+　　var result = '';
+　　for (i = 0; i < len; i++) {
+　　　　result += chars.charAt(Math.floor(Math.random() * chars.length));
+　　}
+		document.getElementById("randomText").value = result;
+	 }
+	 
+	 function hash(){
+	 	document.getElementById("hashResultText").value = waiting;
+	 	var radios=document.getElementsByName("hash_type");
+	 	 for(var i=0;i<radios.length;i++){
+			if(radios[i].checked==true && radios[i].value=='sha1'){
+				document.getElementById("hashResultText").value = sjcl.codec.hex.fromBits(sjcl.hash.sha1.hash(sjcl.codec.utf8String.toBits(document.getElementById("hashText").value)));
+				return;
+			}
+			if(radios[i].checked==true && radios[i].value=='sha256'){
+				document.getElementById("hashResultText").value = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(sjcl.codec.utf8String.toBits(document.getElementById("hashText").value)));
+				return;
+			}
+			if(radios[i].checked==true && radios[i].value=='sha512'){
+				document.getElementById("hashResultText").value = sjcl.codec.hex.fromBits(sjcl.hash.sha512.hash(sjcl.codec.utf8String.toBits(document.getElementById("hashText").value)));
+				return;
+			}
+		}
+	 	
+	 }
+	 
+	 function color(t){
+	 		if(t=='dec'){
+	 				var c = document.getElementById("colorhexText").value.toUpperCase();
+	 				var r = parseInt('0x'+c.substring(0,2));
+	 				var g = parseInt('0x'+c.substring(2,4));
+	 				var b = parseInt('0x'+c.substring(4,6));
+	 				document.getElementById("colordecText").value = r+','+g+','+b;
+	 				document.getElementById("colorshow").style.backgroundColor = '#'+c;
+	 				if(r+b+g > 128*3){
+	 						document.getElementById("colorshow").style.color = '#000000';
+	 				}else{
+	 						document.getElementById("colorshow").style.color = '#ffffff';
+	 				}
+	 				document.getElementById("colorshow").innerHTML = '#'+c+' &nbsp; rgb('+r+','+g+','+b+') &nbsp; rgba('+r+','+g+','+b+',1)';
+	 		}
+	 		if(t=='hex'){
+	 				var c = document.getElementById("colordecText").value.split(',');
+	 				var r = parseInt(c[0]) < 10 ?  '0'+parseInt(c[0]).toString(16) : parseInt(c[0]).toString(16);
+	 				var g = parseInt(c[1]) < 10 ?  '0'+parseInt(c[1]).toString(16) : parseInt(c[1]).toString(16);
+	 				var b = parseInt(c[2]) < 10 ?  '0'+parseInt(c[2]).toString(16) : parseInt(c[2]).toString(16);
+	 				var h = (r+g+b).toUpperCase();
+	 				document.getElementById("colorhexText").value = h;
+	 				document.getElementById("colorshow").style.backgroundColor = '#'+h;
+	 				document.getElementById("colorshow").innerHTML = '#'+h+' &nbsp; rgb('+c[0]+','+c[1]+','+c[2]+') &nbsp; rgba('+c[0]+','+c[1]+','+c[2]+',1)';
+	 		}
+	 	
+	 }
+  	 
+	</script>
+</head>
+<body onload="init()">
+	<div class="main">
+		<div class="menu">
+		<ul id="menu">
+				<li title="urlencode">Urlencode</li>
+				<li title="base64">BASE64</li>
+				<li title="json">JSON</li>
+				<li title="hash">HASH</li>
+				<li title="aes265cbc">AES</li>
+				<li title="hex">HEX</li>
+				<li title="random">随机</li>
+				<li title="lowerupper">大小写</li>
+				<li title="csct">简繁</li>
+				<li title="timestamp">时间戳</li>
+				<li title="color">颜色</li>
+				<li title="ascii">ASCII</li>
+		</ul>
+		</div>
+		
+		<div class="function" id="urlencode">
+			<input type="button" class="button2" onclick="urlcode('en')" value="Url编码  >>">
+			<input type="button" class="button2" onclick="urlcode('de')" value="<<  Url解码">
+			<textarea id="urlencodeText">http://www.abc.com/</textarea>
+			<textarea id="urldecodeText"></textarea>
+		</div>
+		
+		<div class="function" id="json">
+			<input type="button" onclick="json_format()" class="button1" value="格式化  >>">
+			<textarea id="json_string">{"a":"b","c":2,"d":["1","2","3"]}</textarea>
+			<textarea id="json_format"></textarea>
+		</div>
+		<div class="function" id="base64">
+			<div class="param">
+				<input type="radio" name="base64_type" value="base64" checked="checked"/> BASE64 
+				<input type="radio" name="base64_type" value="base64url" /> BASE64URL 
+				<input type="file" id="image" class="textinput" accept="image/*" onchange="base64code('img')"/>
+			</div>
+			<input type="button" class="button2" onclick="base64code('en')" value="base64编码  >>">
+			<input type="button" class="button2" onclick="base64code('de')" value="<<  base64解码">
+			<textarea id="base64encodeText" style="height:calc(100% - 87px)">printf "fsdfd"|base64 -w0</textarea>
+			<textarea id="base64decodeText" style="height:calc(100% - 87px)">printf "ZnNkZmQ="|base64 -d</textarea>
+		</div>
+
+		<div class="function" id="hash">
+			<div class="param">
+				<input type="radio" name="hash_type" value="sha1" checked="checked"/> SHA1 
+				<input type="radio" name="hash_type" value="sha256" /> SHA256 
+				<input type="radio" name="hash_type" value="sha512"/> SHA512
+			</div>
+			<input type="button" class="button1" onclick="hash()" value="hash  >>">
+			<textarea id="hashText" style="height:calc(100% - 87px)">echo "dfd"|sha1sum/sha256/sha512sum</textarea>
+			<textarea id="hashResultText" readonly="readonly" style="height:calc(100% - 87px)"></textarea>
+		</div>
+		<div class="function" id="aes265cbc">
+			<div class="param">
+				iv : <input type="text" class="textinput" style="width:28%" id="aes256cbc_iv" value="12345678901234567890123456789012"/>  &nbsp;
+				key : <input type="text" class="textinput" style="width:56%" id="aes256cbc_key" size="64" value="1234567890123456789012345678901234567890123456789012345678901234"/> 
+			</div>
+			<input type="button" class="button2" onclick="aes256cbc('en')" value="加密  >>">
+			<input type="button" class="button2" onclick="aes256cbc('de')" value="<<  解密">
+			<textarea id="aes256deText" style="height:calc(100% - 90px)">openssl enc -aes-256-cbc -in 'in.txt' -out 'out.txt' -iv 12345678901234567890123456789012 -K 1234567890123456789012345678901234567890123456789012345678901234  -nosalt</textarea>
+			<textarea id="aes256enText" style="height:calc(100% - 90px)">openssl aes-256-cbc -d -in 'in.txt' -out 'out.txt' -iv 12345678901234567890123456789012 -K 1234567890123456789012345678901234567890123456789012345678901234  -nosalt</textarea>
+		</div>
+		<div class="function" id="hex">
+			<input type="button" class="button2" onclick="hexcode('h')" value="转换  >>">
+			<input type="button" class="button2" onclick="hexcode('s')" value="<<  还原">
+			<textarea id="hexStringText">ABC</textarea>
+			<textarea id="hexResultText"></textarea>
+		</div>
+		<div class="function" id="random">
+			
+			<div class="param">
+				<input type="radio" name="random_type" value="complex" checked="checked"/> 字符 
+				<input type="radio" name="random_type" value="string" /> 字母 
+				<input type="radio" name="random_type" value="hex"/> 十六进制
+				<input type="radio" name="random_type" value="dec"/> 十进制
+				<input type="text" class="textinput" style="width:5em" id="random_len" value="20"/> 长度
+			</div>
+			<input type="button" class="button1" onclick="random()" value="随机数生成">
+			<textarea id="randomText" style="width:99%;height:calc(100% - 90px)"></textarea>
+		</div>
+		
+	</div>
+	
+	<div class="function" id="timestamp">
+			<input type="button" class="button2" onclick="timestamp('t')" value="转换成字符串  >>">
+			<input type="button" class="button2" onclick="timestamp('s')" value="<<  转换成时间戳">
+			<textarea id="timestampText"></textarea>
+			<textarea id="timestringText"></textarea>
+		</div>
+	
+	<div class="function" id="lowerupper">
+			<input type="button" class="button2" onclick="lowerupper('u')" value="转大写  >>">
+			<input type="button" class="button2" onclick="lowerupper('l')" value="<<  转小写">
+			<textarea id="lowerText">abc</textarea>
+			<textarea id="upperText">DEF</textarea>
+		</div>
+	<div class="function" id="color">
+			<div class="param">
+				<span id="colorshow">&nbsp;</span>
+			</div>
+			<input type="button" class="button2" onclick="color('dec')" value="转十进制  >>">
+			<input type="button" class="button2" onclick="color('hex')" value="<<  转十六进制">
+			<textarea id="colorhexText" style="height:calc(100% - 87px)">FF0066</textarea>
+			<textarea id="colordecText" style="height:calc(100% - 87px)">255,80,66</textarea>
+		</div>
+		
+<div class="function" id="csct">
+			<input type="button" class="button2" onclick="csct('ct')" value="转繁体  >>">
+			<input type="button" class="button2" onclick="csct('cs')" value="<<  转简体">
+			<textarea id="csText">周润发</textarea>
+			<textarea id="ctText"></textarea>
+		</div>
+		
+	<div class="function" id="ascii">
+	<table>
+<tr><th>DEC</th><th>HEX</th><th>符号</th><th>说明</th></tr>
+<tr><td>0</td><td>00</td><td>NUL</td><td>Null char (空字符)</td></tr>
+<tr><td>1</td><td>01</td><td>SOH</td><td>Start of Heading (标题开始)</td></tr>
+<tr><td>2</td><td>02</td><td>STX</td><td>Start of Text (正文开始)</td></tr>
+<tr><td>3</td><td>03</td><td>ETX</td><td>End of Text (正文结束)</td></tr>
+<tr><td>4</td><td>04</td><td>EOT</td><td>End of Transmission (传输结束)</td></tr>
+<tr><td>5</td><td>05</td><td>ENQ</td><td>Enquiry (请求)</td></tr>
+<tr><td>6</td><td>06</td><td>ACK</td><td>Acknowledgment (收到通知)</td></tr>
+<tr><td>7</td><td>07</td><td>BEL</td><td>Bell (响铃)</td></tr>
+<tr><td>8</td><td>08</td><td>BS</td><td>Back Space (退格)</td></tr>
+<tr><td>9</td><td>09</td><td>HT</td><td>Horizontal Tab (水平制表符)</td></tr>
+<tr><td>10</td><td>0A</td><td>LF</td><td>Line Feed (换行键)</td></tr>
+<tr><td>11</td><td>0B</td><td>VT</td><td>Vertical Tab (垂直制表符)</td></tr>
+<tr><td>12</td><td>0C</td><td>FF</td><td>Form Feed (换页键)</td></tr>
+<tr><td>13</td><td>0D</td><td>CR</td><td>Carriage Return (回车键)</td></tr>
+<tr><td>14</td><td>0E</td><td>SO</td><td>Shift Out / X-On (不用切换)</td></tr>
+<tr><td>15</td><td>0F</td><td>SI</td><td>Shift In / X-Off (启用切换)</td></tr>
+<tr><td>16</td><td>10</td><td>DLE</td><td>Data Line Escape (数据链路转义)</td></tr>
+<tr><td>17</td><td>11</td><td>DC1</td><td>Device Control 1 (设备控制1)</td></tr>
+<tr><td>18</td><td>12</td><td>DC2</td><td>Device Control 2 (设备控制2)</td></tr>
+<tr><td>19</td><td>13</td><td>DC3</td><td>Device Control 3 (设备控制3)</td></tr>
+<tr><td>20</td><td>14</td><td>DC4</td><td>Device Control 4 (设备控制4)</td></tr>
+<tr><td>21</td><td>15</td><td>NAK</td><td>Negative Acknowledgement (拒绝接收)</td></tr>
+<tr><td>22</td><td>16</td><td>SYN</td><td>Synchronous Idle (同步空闲)</td></tr>
+<tr><td>23</td><td>17</td><td>ETB</td><td>End of Transmit Block (传输块结束)</td></tr>
+<tr><td>24</td><td>18</td><td>CAN</td><td>Cancel (取消)</td></tr>
+<tr><td>25</td><td>19</td><td>EM</td><td>End of Medium (介质中断)</td></tr>
+<tr><td>26</td><td>1A</td><td>SUB</td><td>Substitute (替补)</td></tr>
+<tr><td>27</td><td>1B</td><td>ESC</td><td>Escape (溢出)</td></tr>
+<tr><td>28</td><td>1C</td><td>FS</td><td>File Separator (文件分割符)</td></tr>
+<tr><td>29</td><td>1D</td><td>GS</td><td>Group Separator (分组符)</td></tr>
+<tr><td>30</td><td>1E</td><td>RS</td><td>Record Separator (记录分离符)</td></tr>
+<tr><td>31</td><td>1F</td><td>US</td><td>Unit Separator (单元分隔符)</td></tr>
+<tr><td>32</td><td>20</td><td>&nbsp;</td><td>Space (空格)</td></tr>
+<tr><td>33</td><td>21</td><td>!</td><td>Exclamation mark</td></tr>
+<tr><td>34</td><td>22</td><td>"</td><td>Double quotes</td></tr>
+<tr><td>35</td><td>23</td><td>#</td><td>Number</td></tr>
+<tr><td>36</td><td>24</td><td>$</td><td>Dollar</td></tr>
+<tr><td>37</td><td>25</td><td>%</td><td>Procenttecken</td></tr>
+<tr><td>38</td><td>26</td><td>&amp;</td><td>Ampersand</td></tr>
+<tr><td>39</td><td>27</td><td>'</td><td>Single quote</td></tr>
+<tr><td>40</td><td>28</td><td>(</td><td>Open parenthesis</td></tr>
+<tr><td>41</td><td>29</td><td>)</td><td>Close parenthesis</td></tr>
+<tr><td>42</td><td>2A</td><td>*</td><td>Asterisk</td></tr>
+<tr><td>43</td><td>2B</td><td>+</td><td>Plus</td></tr>
+<tr><td>44</td><td>2C</td><td>,</td><td>Comma</td></tr>
+<tr><td>45</td><td>2D</td><td>-</td><td>Hyphen</td></tr>
+<tr><td>46</td><td>2E</td><td>.</td><td>Period, dot or full stop</td></tr>
+<tr><td>47</td><td>2F</td><td>/</td><td>Slash or divide</td></tr>
+<tr><td>48</td><td>30</td><td>0</td><td>Zero</td></tr>
+<tr><td>49</td><td>31</td><td>1</td><td>One</td></tr>
+<tr><td>50</td><td>32</td><td>2</td><td>Two</td></tr>
+<tr><td>51</td><td>33</td><td>3</td><td>Three</td></tr>
+<tr><td>52</td><td>34</td><td>4</td><td>Four</td></tr>
+<tr><td>53</td><td>35</td><td>5</td><td>Five</td></tr>
+<tr><td>54</td><td>36</td><td>6</td><td>Six</td></tr>
+<tr><td>55</td><td>37</td><td>7</td><td>Seven</td></tr>
+<tr><td>56</td><td>38</td><td>8</td><td>Eight</td></tr>
+<tr><td>57</td><td>39</td><td>9</td><td>Nine</td></tr>
+<tr><td>58</td><td>3A</td><td>:</td><td>Colon</td></tr>
+<tr><td>59</td><td>3B</td><td>;</td><td>Semicolon</td></tr>
+<tr><td>60</td><td>3C</td><td>&lt;</td><td>Less than</td></tr>
+<tr><td>61</td><td>3D</td><td>=</td><td>Equals</td></tr>
+<tr><td>62</td><td>3E</td><td>&gt;</td><td>Greater than</td></tr>
+<tr><td>63</td><td>3F</td><td>?</td><td>Question mark</td></tr>
+<tr><td>64</td><td>40</td><td>@</td><td>At symbol</td></tr>
+<tr><td>65</td><td>41</td><td>A</td><td>A</td></tr>
+<tr><td>66</td><td>42</td><td>B</td><td>B</td></tr>
+<tr><td>67</td><td>43</td><td>C</td><td>C</td></tr>
+<tr><td>68</td><td>44</td><td>D</td><td>D</td></tr>
+<tr><td>69</td><td>45</td><td>E</td><td>E</td></tr>
+<tr><td>70</td><td>46</td><td>F</td><td>F</td></tr>
+<tr><td>71</td><td>47</td><td>G</td><td>G</td></tr>
+<tr><td>72</td><td>48</td><td>H</td><td>H</td></tr>
+<tr><td>73</td><td>49</td><td>I</td><td>I</td></tr>
+<tr><td>74</td><td>4A</td><td>J</td><td>J</td></tr>
+<tr><td>75</td><td>4B</td><td>K</td><td>K</td></tr>
+<tr><td>76</td><td>4C</td><td>L</td><td>L</td></tr>
+<tr><td>77</td><td>4D</td><td>M</td><td>M</td></tr>
+<tr><td>78</td><td>4E</td><td>N</td><td>N</td></tr>
+<tr><td>79</td><td>4F</td><td>O</td><td>O</td></tr>
+<tr><td>80</td><td>50</td><td>P</td><td>P</td></tr>
+<tr><td>81</td><td>51</td><td>Q</td><td>Q</td></tr>
+<tr><td>82</td><td>52</td><td>R</td><td>R</td></tr>
+<tr><td>83</td><td>53</td><td>S</td><td>S</td></tr>
+<tr><td>84</td><td>54</td><td>T</td><td>T</td></tr>
+<tr><td>85</td><td>55</td><td>U</td><td>U</td></tr>
+<tr><td>86</td><td>56</td><td>V</td><td>V</td></tr>
+<tr><td>87</td><td>57</td><td>W</td><td>W</td></tr>
+<tr><td>88</td><td>58</td><td>X</td><td>X</td></tr>
+<tr><td>89</td><td>59</td><td>Y</td><td>Y</td></tr>
+<tr><td>90</td><td>5A</td><td>Z</td><td>Z</td></tr>
+<tr><td>91</td><td>5B</td><td>[</td><td>Opening bracket</td></tr>
+<tr><td>92</td><td>5C</td><td>\</td><td>Backslash</td></tr>
+<tr><td>93</td><td>5D</td><td>]</td><td>Closing bracket</td></tr>
+<tr><td>94</td><td>5E</td><td>^</td><td>Caret - circumflex</td></tr>
+<tr><td>95</td><td>5F</td><td>_</td><td>Underscore</td></tr>
+<tr><td>96</td><td>60</td><td>`</td><td>Grave accent</td></tr>
+<tr><td>97</td><td>61</td><td>a</td><td>a</td></tr>
+<tr><td>98</td><td>62</td><td>b</td><td>b</td></tr>
+<tr><td>99</td><td>63</td><td>c</td><td>c</td></tr>
+<tr><td>100</td><td>64</td><td>d</td><td>d</td></tr>
+<tr><td>101</td><td>65</td><td>e</td><td>e</td></tr>
+<tr><td>102</td><td>66</td><td>f</td><td>f</td></tr>
+<tr><td>103</td><td>67</td><td>g</td><td>g</td></tr>
+<tr><td>104</td><td>68</td><td>h</td><td>h</td></tr>
+<tr><td>105</td><td>69</td><td>i</td><td>i</td></tr>
+<tr><td>106</td><td>6A</td><td>j</td><td>j</td></tr>
+<tr><td>107</td><td>6B</td><td>k</td><td>k</td></tr>
+<tr><td>108</td><td>6C</td><td>l</td><td>l</td></tr>
+<tr><td>109</td><td>6D</td><td>m</td><td>m</td></tr>
+<tr><td>110</td><td>6E</td><td>n</td><td>n</td></tr>
+<tr><td>111</td><td>6F</td><td>o</td><td>o</td></tr>
+<tr><td>112</td><td>70</td><td>p</td><td>p</td></tr>
+<tr><td>113</td><td>71</td><td>q</td><td>q</td></tr>
+<tr><td>114</td><td>72</td><td>r</td><td>r</td></tr>
+<tr><td>115</td><td>73</td><td>s</td><td>s</td></tr>
+<tr><td>116</td><td>74</td><td>t</td><td>t</td></tr>
+<tr><td>117</td><td>75</td><td>u</td><td>u</td></tr>
+<tr><td>118</td><td>76</td><td>v</td><td>v</td></tr>
+<tr><td>119</td><td>77</td><td>w</td><td>w</td></tr>
+<tr><td>120</td><td>78</td><td>x</td><td>x</td></tr>
+<tr><td>121</td><td>79</td><td>y</td><td>y</td></tr>
+<tr><td>122</td><td>7A</td><td>z</td><td>z</td></tr>
+<tr><td>123</td><td>7B</td><td>{</td><td>Opening brace</td></tr>
+<tr><td>124</td><td>7C</td><td>|</td><td>Vertical bar</td></tr>
+<tr><td>125</td><td>7D</td><td>}</td><td>Closing brace</td></tr>
+<tr><td>126</td><td>7E</td><td>~</td><td>Equivalency sign (tilde)</td></tr>
+<tr><td>127</td><td>7F</td><td></td><td>Delete</td></tr>
+</table>
+
+	
+</div>
+	
+</body>
+</html>
+
