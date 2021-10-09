@@ -8,6 +8,10 @@
 				margin:0px;/*body 默认有margin*/
 				color:#ffffff;
 		}
+		textarea {font-size:24px;}
+		textarea:focus {font-size:24px;}
+		@media monitor and (-webkit-min-device-pixel-ratio:0) {select,textarea {font-size:24px;}}
+		@media monitor and (-webkit-min-device-pixel-ratio:0) {select:focus,textarea:focus {font-size:24px;}}
   	.main{width:100%;height:100%;font-size:28px;}
 		.menu{
 				width:100%;
@@ -45,31 +49,37 @@
 			font-size:24px;
 			color:#ffffff;
 			background-color:#000000;
+			-webkit-appearance:none;
 		}
 
 		table{margin-top:0px;border-collapse:collapse;border:1px solid #aaa;width:100%;color:#ffffff;}
 		th{font-size:24px;vertical-align:baseline;background-color:#3F3F3F;border:1px solid #3F3F3F;text-align:center;padding:1px 1px 1px 1px;}
     td{font-size:24px;text-align:left;vertical-align:text-top;padding:1px 1px 1px 1px;border:1px solid #aaa;}
-    
+
 		.param{
 			width:100%;
 			font-size:24px;
 			color:#ffffff;
 		}
 
-		.button2{
-			width:50%;
+		.button{
 			font-size:32px;
 			-webkit-appearance: none;
+			border:1px solid #000;
+			background-color:#dddddd;
 		}
-		.button1{
-			width:100%;
+		.button:active{
 			font-size:32px;
 			-webkit-appearance: none;
+			border:1px solid #000;
+			background-color:#8B0D00;
+			outline: none;
 		}
+
 		.textinput{
 			line-height:24px;
 			font-size:24px;
+			-webkit-appearance:none;
 		}
   </style>
   <script type="text/javascript" src="js/sjcl_tools.js"></script>
@@ -77,12 +87,17 @@
   <script type="text/javascript">
   	var waiting = "waiting...";
   	function init(){
-  		document.getElementsByClassName("function")[0].style.display="block";
+  		//document.getElementsByClassName("function")[0].style.display="block";
   		var menus=document.getElementById("menu").childNodes;
+  		var first = true;
 			for(var i=0; i < menus.length; i++) {
 				if(menus[i].nodeName == "LI"){
 					//console.log(menus[i].title);
 					menus[i].addEventListener("click",function(){switch_function(this.title);});
+					if(first){
+						document.getElementById(menus[i].title).style.display="block";
+						first = false;
+					}
 				}
 			}
 			
@@ -199,13 +214,37 @@
   	}
   	
 		function hexcode(t){
-			if(t=='h'){
+			var radios=document.getElementsByName("hex_type");
+			var hex_type = false;
+	 	 	for(var i=0;i<radios.length;i++){
+	 	 		if(radios[i].checked==true)
+					hex_type = radios[i].value;
+	 	 	}
+			
+			if(t=='h' && hex_type == 'string'){
   			document.getElementById("hexResultText").value = sjcl.codec.hex.fromBits(sjcl.codec.utf8String.toBits(document.getElementById("hexStringText").value));
+  			return;
+  		}
+  		
+  		if(t=='s' && hex_type == 'string') {
+  			document.getElementById("hexStringText").value = sjcl.codec.utf8String.fromBits(sjcl.codec.hex.toBits(document.getElementById("hexResultText").value));
+  			return;
+  		}
+  		var n = 16;
+			if(hex_type == 'number8')
+					n=8;
+			if(hex_type == 'number2')
+					n=2;
+			if(t=='h' && hex_type !== 'string'){
+				
+  			document.getElementById("hexResultText").value = parseInt(document.getElementById("hexStringText").value).toString(n);
   			
   		}
   		
-  		if(t=='s') {
-  			document.getElementById("hexStringText").value = sjcl.codec.utf8String.fromBits(sjcl.codec.hex.toBits(document.getElementById("hexResultText").value));
+  		if(t=='s' && hex_type !== 'string'){
+				
+  			document.getElementById("hexStringText").value = parseInt(document.getElementById("hexResultText").value,n).toString();
+  			
   		}
   	}
   	
@@ -373,9 +412,9 @@
 	 function color(t){
 	 		if(t=='dec'){
 	 				var c = document.getElementById("colorhexText").value.toUpperCase();
-	 				var r = parseInt('0x'+c.substring(0,2));
-	 				var g = parseInt('0x'+c.substring(2,4));
-	 				var b = parseInt('0x'+c.substring(4,6));
+	 				var r = parseInt(c.substring(0,2),16);
+	 				var g = parseInt(c.substring(2,4),16);
+	 				var b = parseInt(c.substring(4,6),16);
 	 				document.getElementById("colordecText").value = r+','+g+','+b;
 	 				document.getElementById("colorshow").style.backgroundColor = '#'+c;
 	 				if(r+b+g > 128*3){
@@ -404,41 +443,43 @@
 	<div class="main">
 		<div class="menu">
 		<ul id="menu">
-				<li title="urlencode">Urlencode</li>
+				<li title="csct">简繁</li>
+				<li title="random">随机</li>
+				<li title="color">颜色</li>
+				<li title="timestamp">时间戳</li>
+				<li title="urlencode">URL</li>
 				<li title="base64">BASE64</li>
 				<li title="json">JSON</li>
 				<li title="hash">HASH</li>
 				<li title="aes265cbc">AES</li>
 				<li title="hex">HEX</li>
-				<li title="random">随机</li>
 				<li title="lowerupper">大小写</li>
-				<li title="csct">简繁</li>
-				<li title="timestamp">时间戳</li>
-				<li title="color">颜色</li>
+				
+
 				<li title="ascii">ASCII</li>
 		</ul>
 		</div>
 		
 		<div class="function" id="urlencode">
-			<input type="button" class="button2" onclick="urlcode('en')" value="Url编码  >>">
-			<input type="button" class="button2" onclick="urlcode('de')" value="<<  Url解码">
+			<input type="button" class="button" style="width:50%" onclick="urlcode('en')" value="Url编码  >>">
+			<input type="button" class="button" style="width:50%" onclick="urlcode('de')" value="<<  Url解码">
 			<textarea id="urlencodeText">http://www.abc.com/</textarea>
 			<textarea id="urldecodeText"></textarea>
 		</div>
 		
 		<div class="function" id="json">
-			<input type="button" onclick="json_format()" class="button1" value="格式化  >>">
+			<input type="button" onclick="json_format()" class="button" style="width:99%" value="格式化  >>">
 			<textarea id="json_string">{"a":"b","c":2,"d":["1","2","3"]}</textarea>
 			<textarea id="json_format"></textarea>
 		</div>
 		<div class="function" id="base64">
 			<div class="param">
 				<input type="radio" name="base64_type" value="base64" checked="checked"/> BASE64 
-				<input type="radio" name="base64_type" value="base64url" /> BASE64URL 
+				<input type="radio" name="base64_type" value="base64url" /> BASE64URL &nbsp; 
 				<input type="file" id="image" class="textinput" accept="image/*" onchange="base64code('img')"/>
 			</div>
-			<input type="button" class="button2" onclick="base64code('en')" value="base64编码  >>">
-			<input type="button" class="button2" onclick="base64code('de')" value="<<  base64解码">
+			<input type="button" class="button" style="width:50%" onclick="base64code('en')" value="base64编码  >>">
+			<input type="button" class="button" style="width:50%" onclick="base64code('de')" value="<<  base64解码">
 			<textarea id="base64encodeText" style="height:calc(100% - 87px)">printf "fsdfd"|base64 -w0</textarea>
 			<textarea id="base64decodeText" style="height:calc(100% - 87px)">printf "ZnNkZmQ="|base64 -d</textarea>
 		</div>
@@ -449,7 +490,7 @@
 				<input type="radio" name="hash_type" value="sha256" /> SHA256 
 				<input type="radio" name="hash_type" value="sha512"/> SHA512
 			</div>
-			<input type="button" class="button1" onclick="hash()" value="hash  >>">
+			<input type="button" class="button" style="width:99%" onclick="hash()" value="hash  >>">
 			<textarea id="hashText" style="height:calc(100% - 87px)">echo "dfd"|sha1sum/sha256/sha512sum</textarea>
 			<textarea id="hashResultText" readonly="readonly" style="height:calc(100% - 87px)"></textarea>
 		</div>
@@ -458,16 +499,22 @@
 				iv : <input type="text" class="textinput" style="width:28%" id="aes256cbc_iv" value="12345678901234567890123456789012"/>  &nbsp;
 				key : <input type="text" class="textinput" style="width:56%" id="aes256cbc_key" size="64" value="1234567890123456789012345678901234567890123456789012345678901234"/> 
 			</div>
-			<input type="button" class="button2" onclick="aes256cbc('en')" value="加密  >>">
-			<input type="button" class="button2" onclick="aes256cbc('de')" value="<<  解密">
+			<input type="button" class="button" style="width:50%"  onclick="aes256cbc('en')" value="加密  >>">
+			<input type="button" class="button" style="width:50%"  onclick="aes256cbc('de')" value="<<  解密">
 			<textarea id="aes256deText" style="height:calc(100% - 90px)">openssl enc -aes-256-cbc -in 'in.txt' -out 'out.txt' -iv 12345678901234567890123456789012 -K 1234567890123456789012345678901234567890123456789012345678901234  -nosalt</textarea>
 			<textarea id="aes256enText" style="height:calc(100% - 90px)">openssl aes-256-cbc -d -in 'in.txt' -out 'out.txt' -iv 12345678901234567890123456789012 -K 1234567890123456789012345678901234567890123456789012345678901234  -nosalt</textarea>
 		</div>
 		<div class="function" id="hex">
-			<input type="button" class="button2" onclick="hexcode('h')" value="转换  >>">
-			<input type="button" class="button2" onclick="hexcode('s')" value="<<  还原">
-			<textarea id="hexStringText">ABC</textarea>
-			<textarea id="hexResultText"></textarea>
+			<div class="param">
+				<input type="radio" name="hex_type" value="string" checked="checked"/> 字符串转十六进制    
+				<input type="radio" name="hex_type" value="number16" /> 十进制转十六进制  
+				<input type="radio" name="hex_type" value="number8" /> 十进制转八进制  
+				<input type="radio" name="hex_type" value="number2" /> 十进制转二进制  
+			</div>
+			<input type="button" class="button" style="width:50%"  onclick="hexcode('h')" value="转换  >>">
+			<input type="button" class="button" style="width:50%"  onclick="hexcode('s')" value="<<  还原">
+			<textarea id="hexStringText" style="height:calc(100% - 90px)">ABC</textarea>
+			<textarea id="hexResultText" style="height:calc(100% - 90px)"></textarea>
 		</div>
 		<div class="function" id="random">
 			
@@ -478,22 +525,22 @@
 				<input type="radio" name="random_type" value="dec"/> 十进制
 				<input type="text" class="textinput" style="width:5em" id="random_len" value="30"/> 长度
 			</div>
-			<input type="button" class="button1" onclick="random()" value="随机数生成">
+			<input type="button" class="button" style="width:99%"  onclick="random()" value="随机数生成">
 			<textarea id="randomText" style="width:99%;height:calc(100% - 90px)"></textarea>
 		</div>
 		
 	</div>
 	
 	<div class="function" id="timestamp">
-			<input type="button" class="button2" onclick="timestamp('t')" value="转换成字符串  >>">
-			<input type="button" class="button2" onclick="timestamp('s')" value="<<  转换成时间戳">
+			<input type="button" class="button" style="width:50%"  onclick="timestamp('t')" value="转换成字符串  >>">
+			<input type="button" class="button" style="width:50%"  onclick="timestamp('s')" value="<<  转换成时间戳">
 			<textarea id="timestampText"></textarea>
 			<textarea id="timestringText"></textarea>
 		</div>
 	
 	<div class="function" id="lowerupper">
-			<input type="button" class="button2" onclick="lowerupper('u')" value="转大写  >>">
-			<input type="button" class="button2" onclick="lowerupper('l')" value="<<  转小写">
+			<input type="button" class="button" style="width:50%"  onclick="lowerupper('u')" value="转大写  >>">
+			<input type="button" class="button" style="width:50%"  onclick="lowerupper('l')" value="<<  转小写">
 			<textarea id="lowerText">abc</textarea>
 			<textarea id="upperText">DEF</textarea>
 		</div>
@@ -501,15 +548,15 @@
 			<div class="param">
 				<span id="colorshow">&nbsp;</span>
 			</div>
-			<input type="button" class="button2" onclick="color('dec')" value="转十进制  >>">
-			<input type="button" class="button2" onclick="color('hex')" value="<<  转十六进制">
+			<input type="button" class="button" style="width:50%"  onclick="color('dec')" value="转十进制  >>">
+			<input type="button" class="button" style="width:50%"  onclick="color('hex')" value="<<  转十六进制">
 			<textarea id="colorhexText" style="height:calc(100% - 87px)">C0EB6A</textarea>
 			<textarea id="colordecText" style="height:calc(100% - 87px)">00,175,89</textarea>
 		</div>
 		
 <div class="function" id="csct">
-			<input type="button" class="button2" onclick="csct('ct')" value="转繁体  >>">
-			<input type="button" class="button2" onclick="csct('cs')" value="<<  转简体">
+			<input type="button" class="button" style="width:50%"  onclick="csct('ct')" value="转繁体  >>">
+			<input type="button" class="button" style="width:50%"  onclick="csct('cs')" value="<<  转简体">
 			<textarea id="csText">周润发</textarea>
 			<textarea id="ctText"></textarea>
 		</div>
