@@ -436,6 +436,29 @@
 	 		}
 	 	
 	 }
+	 
+	 function unicode(t){
+	 		if(t=='2unicode'){
+	 			var str = document.getElementById("unicodeString").value;
+	 			document.getElementById("unicodeCode").value = waiting;
+	 			var result = '';
+	 			for(var i=0;i < str.length; i++){
+					result += "\\u"+str.charCodeAt(i).toString(16);
+				}
+	 			document.getElementById("unicodeCode").value = result;
+	 		}
+	 		
+	 		if(t=='2string'){
+	 			var arr = document.getElementById("unicodeCode").value.split("\\u");
+	 			document.getElementById("unicodeString").value = waiting;
+	 			var result = '';
+	 			for(var i=1;i < arr.length; i++){
+					result += String.fromCharCode(parseInt(arr[i],16));
+				}
+	 			document.getElementById("unicodeString").value = result;
+	 		}
+	 	
+	 }
   	 
 	</script>
 </head>
@@ -454,6 +477,7 @@
 				<li title="aes265cbc">AES</li>
 				<li title="hex">HEX</li>
 				<li title="lowerupper">大小写</li>
+				<li title="unicode">Unicode</li>
 				
 
 				<li title="ascii">ASCII</li>
@@ -559,6 +583,13 @@
 			<input type="button" class="button" style="width:50%"  onclick="csct('cs')" value="<<  转简体">
 			<textarea id="csText">周润发</textarea>
 			<textarea id="ctText"></textarea>
+		</div>
+		
+		<div class="function" id="unicode">
+			<input type="button" class="button" style="width:50%"  onclick="unicode('2unicode')" value="字符串转Unicode  >>">
+			<input type="button" class="button" style="width:50%"  onclick="unicode('2string')" value="<<  Unicode转字符串">
+			<textarea id="unicodeString">中文Aa</textarea>
+			<textarea id="unicodeCode"></textarea>
 		</div>
 		
 	<div class="function" id="ascii">
@@ -699,4 +730,3 @@
 	
 </body>
 </html>
-
