@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>API google apps script Crontab</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">API google apps script Crontab</h1>
+		<span class="tpl_e_date">2022-02-17 11:51:32</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">Tba-IX4f2mkSaZZExm0Lr7xii84P1-nzwE7hOpsSZN2laPnrafrWMrVvLsERlGE-ZiY_8_wHLKayCAefSuMyEA2A4OLif7FqXvr68xgrXEEsrvt5H-Ie3HEyi777pVTUUdNQIU9PDTftMMW46P-ohY1TJmuqdR4OG9LAjRYU6LRLxzSZ-Dy5AnNNZFUVLv11EFtyk5DVP4bqmN_-lm1xyJH9AWmQfFEEesldxLkFOSMMwj0EBsHLOHrRfA4KY_WYiHF7nsX9XWIs7FkcFUuNjAjkvrMw8om20kSUYVmHyiBvVHjYbWLWTmn1tHBOXZRUZXH-88XSt8x6xvv7XPW4_Um0XB8SYSM8dEmkY6j8flPUZ8k4rNE6Qss99UuL8bLTCHnLeOCoprOvTg2BqESBsN3EbgWofwpptZshB_uoaq4pHJhEG-Oi2sv5KTo2je2YEipuIK8lb4_09FsXwcZZKudsOYj5kSA587LR1NHHjzZana_bIhp8ewEP4dWhOH-UkTV4sP7BMJIbDGwuxaEqaCh6PlKEABNQwm2S5aYgoe3ZOAOezPkjIjfUykE0GSqzpYWLIW3msF5yqAlGA7T5EbqLSJ6_ZP-blkUWxKFXV55Xgb0SsqIOaAsSLrYZWxxnqvrUFws7O-LMlYHLg_cWdxqGJuwXjrbm15tJyH-ZlQ0qyKPQwwq885JrOTHrFLacdhsufLA3ANtTefBnPxg1fpmKnuPTR17L-XHVL-RIFCKsVlGsCISVmBglwdnwpcDlCMFzQPRJrhRpUtQTZKfyCc-3GqiH-nzkd9dX5YrjORMNMLzD98RmCumKdi9tl6Q2kJu5sw6A3vydRd4ihfjpvMUApVorUmUcGOzKc2kbtHX4x2n-w4kLQWgX2Y-A3jhNWuC_NEjeZzJ1K79s6FYcx_hTYwUc2-Pgyi9KdUKzgmBnI7Y-chmPEEQuq4ony2yh8Oapujumj5OVYwSAi38sO_qi6M8xMHuV9ae3Bx58sv15CnMMXdPL1NBugiE2lUFGyfcb89iWXHQB7O0flx3M5M1dInMF-FDOMtJAu-OUc8JjMiDWI3J4uK-BNil_BuAOPD9MSWCD_XgNxLWnv8DOSUv9HMXpkxJWvtM_hq_kwwK0pr_YFhkC1KfljBtU0_XiNJpVhzjy49yLNZ_vUvWYh48VpjSj6xtaw3Rk9TTsoF6k7hYicr9XMdNSD5WNa4QsjDMlvOjdsgVu_iqcJQLe88PqhXTvY57EBMeu_HgYQQv86VmPg0czqgYrUItq6NhPfEzYn6abiqv4NkDlxs-hv3I-rs5jOVnMnEkWrc6jY4OCKBgq3byqfNsdLyXVJ3cAi1ZDk03o8Tyc29i74xKHi8TTzAM1_fC7ydKRpjrpLi5WFL_7TnEwh1c3K4JSroZjTOz0TbKwt6ShNPCrQuk4EDMfJUY1DhDrOWfU5-e0Sf3SEv3qsC0vwLreOqjncSqJitjLiIsImV6yYe42dUT_89RfGbgElFg3dZJkfBFK-e-mBEwoyCgmnQP7UhxEGXyivBKL5ISQu8vuyl_g2Ap76WNXQMLzoB9JKVNAPugfiY4_5iac312nI7uc2gpKPYfBks73hDGRYXTlGhp31fx3nsfjjvMHYm4Te7jUmYly7i6WnR0Kr5ZiR9DuQVYzB7TiXD2pNzN0e0bWSK0Nc8qCWw</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
