@@ -459,7 +459,31 @@
 	 		}
 	 	
 	 }
-  	 
+	 
+	 function dns_query(){
+	 	var domain = document.getElementById("domain").value;
+	 	var url = 'https://1.1.1.1/dns-query';
+	 	var radios=document.getElementsByName("record_type");
+	 	var record_type;
+	 	for(var i=0;i<radios.length;i++){
+	 		if(radios[i].checked==true){
+	 			record_type = radios[i].value;
+			}
+	 	}
+	 	fetch("https://1.1.1.1/dns-query?name="+document.getElementById("domain").value+"&type="+record_type,
+			{cache: 'no-cache',
+			 referrerPolicy : "no-referrer",
+			 credentials: 'omit',
+			 headers: {"accept":"application/dns-json"},
+		}).then(function(response) {
+			if(response.ok) {return response.json();}
+  			throw new Error('http not ok.'+response.status);
+  	}).then(function(json) {
+  		document.getElementById("domain_result").value = JSON.stringify(json,null,2);	
+  	}).catch(function(e) {
+  		document.getElementById("domain_result").value = 'fetch error: '+ e.message;
+		});
+  }
 	</script>
 </head>
 <body onload="init()">
@@ -477,6 +501,7 @@
 				<li title="aes265cbc">AES</li>
 				<li title="hex">HEX</li>
 				<li title="lowerupper">大小写</li>
+				<li title="dns">域名解析</li>
 				<li title="unicode">Unicode</li>
 				
 
@@ -584,7 +609,21 @@
 			<textarea id="csText">周润发</textarea>
 			<textarea id="ctText"></textarea>
 		</div>
-		
+<div class="function" id="dns">
+	<div class="param">
+	<input type="radio" name="record_type" value="1" checked="checked"/> A 
+	<input type="radio" name="record_type" value="2"/> NS
+	<input type="radio" name="record_type" value="5"/> CNAME
+	<input type="radio" name="record_type" value="6"/> SOA
+	<input type="radio" name="record_type" value="15"/> MX
+	<input type="radio" name="record_type" value="16"/> TXT
+	<input type="radio" name="record_type" value="28"/> AAAA
+	<input type="radio" name="record_type" value="99"/> SPF
+</div>
+			<input type="button" onclick="dns_query()" class="button" style="width:99%" value="解析 (Cloudflare DoH)" />
+			<textarea id="domain">google.com</textarea>
+			<textarea id="domain_result"></textarea>
+		</div>		
 		<div class="function" id="unicode">
 			<input type="button" class="button" style="width:50%"  onclick="unicode('2unicode')" value="字符串转Unicode  >>">
 			<input type="button" class="button" style="width:50%"  onclick="unicode('2string')" value="<<  Unicode转字符串">
