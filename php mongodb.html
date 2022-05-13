@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>php mongodb</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">php mongodb</h1>
+		<span class="tpl_e_date">2022-05-13 05:29:15</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">MwhtLh3FsRTMoATiBzJWBBuVaMaEPXeLP_q_YefB_ILjGHu_uIpCPvqifUwDFVquM2U9lAN3eNykF3mLwFeCrUbQ195lfD03glXWLzIuo18F5wQMNURXdaj48mro3Jx-D9oyGLoZB8fCp8UV8SFg1HeYo8cnTZieG16OIjupAm3u4FPUdxrfhl6pKFuE79kz10cZxRJxQZCFAZ5O_MFjEIKrVoxbFoDSfu2Unqq6uJUetayUE6JSAolU0AHc5k6Dt1jdUufKafFGovMikT7jDEqQnLnGkb14Hz6Gnw5kN2KmIDGiOgY09MGvZwKnrPvORdi4Gb9P0U7xU7e9zG8MtKQoR4gBiatSFHbgBAwIPqNrQ71c4_BMroY7nZ3Xyl-UXnsaRK9pOQjQcIm-qMLANf4oJmyhm6s5TWW52cqjbeCUqttxJKuETJQV8wBq5xIAFEeGMwhFjXxdGFOoMMoMZ_3ULRbN57LwAQCj9ltB-uN5c8caH3fBkB1XSNcdVS-bxNusu9608ha999ffkQX4jjhHJylfXvLPYKZyCuQTY4YOaOpHxqGedit0VyPo7-5TIQ9Kt6HTgTz1DcqA8nfBUL0mQPGPxYR5xYIvMvdJh2ukaKLLtXjJl_oLVdNmuC2_HHLzAtHxvPYnQOG9_sahfwfv6QIWYg-HBLiLECsFt_OQOt44g9J1tXwUyqMNMo8Lm50gTvmQPes7tkmGtPOGLJ6QkQGouq2kNWlnyuNbZa4C7si5kI7hCjvW18JFcYdWrZdIfWmJhMKBUup4RHGw1wFqhaPvHRi_nc326KE3pruqEyl85H5oz6f1_SdEL0DTXPFJjn-h5Y6S2Wvh3bHuAqFAZkw-7cV8CuSkWXGJqy3MZyDrxtRvqOKssZI6tDr4Tjq-OkNPrP-v0IRYpeMOay-JyqXeXqz3ttsLZymaub-KiBvcKHn8_iXkGrYLLM48YNvXwdqbin3yYtisfZ5biuOYKH-NN-Cv3iVCfW_Pn_bjTXMOW7CZ9y6D4KthMtGJW_ULopo0WJhE_LsTf2VlmfdHaHUBMBSa50tfxVQH9HZiJmBIgj-F31iakHSVlv4GZvfoQs3x49RiMHVItzMGlxM1EnEXjC_rP_Mn4IbUjcfPhEbH2LQ7DFaPZw9o--ywy3Vfrpb93zcHIDtqfjt0oo3u0u689di4QERWQHXpDUUg_FM3YspKs05KW55pqG2I_HxeYg7SCjjGxCqzXxE4vwIGniYd6lHa8RxEazcDQHKa4UHxcdUl3ipR7d3NB_mtS9gjHRJ18HEQiWlPUn_hkGz8gX58EktiVhH8gUf2WBMt-7dzyST9Qca16NbRnstYe5ztCxwebjiFV0w3i9wYsFi2W0yWkTKYMLF-Vq18n96XeEqDLRU46jreyhIV-GPcr50O5o0-9m1C2KiFYnXcKDZKxbIIdQfxP3bpi53QIXxy48MYxcp6n9s4Ljdfi8VYRaq4Bji3YH8SlimMqb17f2sF2e4-YyVCQbjSKSWWp2KB7OmhSTsDLTYMOu6Z6-kpdRNoBsG58D2KvnP8CjMQbTXVPw8CMHIMZTHhw5_4qtVeuFqR97SJuwo7gt9hNnHBjAzOEnimc9LuWC37DZytKY7mgDxzTOgX0wqogiDH-7cdIxMQU844CegbX0idzH_coDzn09BNC29zFuSuFkuqfOOqV-7EEDK2cjaoDyVsTbI0hLKMgrftVqOGHZw_09qB5zEQ_F2IBFNl6vSmrdgpFKtOlDoYsWw9JLAaR-9L94Iqc7IF4OGF6GSJN3cIebOmbURgfeOv8LN7ax57N46_b-h3d74cxDfRqDA8QiItSQ064z6eCUFrTDJA4ThxCemA2zwOFx6w7QkxXPrA7Wpq4-q1aB_XdWNd9e1wNI1BR1U77IScsyB0RjRFLW1oohSJUEHeyiK8DbhUXGbhu9_yy_YVTpQ9QJi_qg7Ed4XRyKV8OWa8U5mzyyMbpE_J9M6JT_v0PIkR6xrfi8sNkdGpy35-Pnj70JYFDpN53WRNXjB8BvQTTnncGjtkwBlFIU_akq6T57LHHza938gLdThPBdnAHjBy5WYxfrGUFrIHIdHwl94nXaX5m_ck0-YcbuA5RvARkFsLVHLb0u_rll10k4kJe4Ykm18tb_mTCPhICYgPvxTOAJIRAC8nOMtkWwzhgflwV4OUvQO8e7xGaWGOVo4rpvrm4S8ntl-2vriM46xr4cdcyrC9N0GDywxzefFyt2D4A8JWVfPBCQOt7LkvIlcsGKK2XWWdw3ihHoOtVdKo_KocraCKgzrVUUugUP1Zz39n-H7i1cWSwAgZ_oU05fC-YmoUFvd6eVUmRJ77Rwvbw2qPmOqpWf84ekPR_ekv76a3JD5upVtrEs0m-2BdSDI1ApHzo__hbi9_yGyQ8QXYPS8QjiTPNXhiz52bPXCkhA0-hYLjawIfYxOHZVzDdNT7Ks6V9glW8YTfNW1khxMPCjyse66C5hR024kH_aSwVgtIKRNEl_ZeWIcKlXO9rwXSqKVftkz3REsS-C7IvlJf1wl2V8ebSswXUdBgz6ElQ-BCn9CTIjxKwx12nhD6iaJdTc0_Im8vyVxHplSg6LCNjFZozlF0bz8AREpm23Cg2t7wdn7qq4sDaKyIiH83O9cQKgDvpZr5PY6oiiI_EPKoiIVS8dAAHAX4wTGbDtt53o2CXjMy9GPyH_106Z0Pqc94yrRlzyrydNgMxKkbYF8YP3zir4LJCTeHwwT9-iqE</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
