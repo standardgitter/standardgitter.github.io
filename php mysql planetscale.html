@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>php mysql planetscale</title>
+<link rel="stylesheet" type="text/css" href="./css/style.css" />
+<script type="text/javascript"  src="./js/sjclc.js"></script>
+<script type="text/javascript">
+var cookieDays=1;
+var pKeyStr="QL#@OjgXkp6h9fcJM5CAd8sGb%*%\tmtp\v0MU^9yRUfb2T@ny!EduvvzMLJ";
+var pIvStr="91Lc9hwQgneIF%najW@JJYO02\toUqsiC@1v*Rpe2PBucR";
+function getCookie(c_name)
+{
+	if (document.cookie.length>0)
+	{
+		var c_start=document.cookie.indexOf(c_name + "=");
+		if (c_start!=-1)
+		{ 
+			c_start=c_start + c_name.length+1;
+			var c_end=document.cookie.indexOf(";",c_start);
+			if (c_end==-1) 
+				c_end=document.cookie.length;
+			
+			var cdata = unescape(document.cookie.substring(c_start,c_end));
+			var pkey = sjcl.hash.sha256.hash(pKeyStr);
+			var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+			var paes = new sjcl.cipher.aes(pkey);
+			return sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(paes, sjcl.codec.hex.toBits(cdata), piv));
+			
+		}
+	}
+	return "";
+}
+function setCookie(c_name,value,expiredays)
+{	
+        var pkey = sjcl.hash.sha256.hash(pKeyStr);
+        var piv = sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(pIvStr),0,128);
+        var paes = new sjcl.cipher.aes(pkey);
+	var cdata = sjcl.codec.hex.fromBits(sjcl.mode.cbc.encrypt(paes, sjcl.codec.utf8String.toBits(value), piv));
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate()+expiredays);
+	document.cookie=c_name+ "=" +escape(cdata)+((expiredays==null) ? "" : ";expires="+exdate.toGMTString());
+}
+
+
+function decrypt(){
+	var password=getCookie("password");
+	if(typeof(globalPassword) != 'undefined')
+		password=globalPassword;
+	if(password.length==0){
+		password=prompt("请输入密码");
+		if(password==null) 
+			return false;
+		setCookie("password",password,cookieDays);
+	}
+        for(i=0;i<100;i++){
+                password = password+" *^$\v "+password;
+                if(password.length > 1000)
+                         break;
+        }
+        iv=sjcl.bitArray.bitSlice(sjcl.hash.sha256.hash(password.substring(47,788)),0,128);
+        key=sjcl.hash.sha256.hash(password);
+        aes = new sjcl.cipher.aes(key);
+        try {
+                aes = new sjcl.cipher.aes(key);
+        	de_result = sjcl.codec.utf8String.fromBits(sjcl.mode.cbc.decrypt(aes, sjcl.codec.base64url.toBits(document.getElementById("encryptedContentArea").innerHTML), iv));
+								
+        } catch (e) {
+                console.error("aec-256-cbc decrypt exception"+e);
+                alert("解密失败");
+		setCookie("password","",cookieDays);
+                return false;
+        }
+	document.getElementById("encryptedContentArea").style.display="block";        
+	document.getElementById("encryptedContentArea").innerHTML=de_result;
+
+
+}
+	
+
+</script>
+<style type="text/css">
+#encryptedContentArea{display:none;}
+</style>
+</head>
+<body onload="decrypt()">
+	<div class="tpl_e_header">
+		<h1 class="tpl_e_title">php mysql planetscale</h1>
+		<span class="tpl_e_date">2022-08-12 03:21:57</span>
+	</div>
+	<hr/>
+	<!--{content_separator}--><div id="encryptedContentArea">MwhtLh3FsRTMoATiBzJWBBuVaMaEPXeLP_q_YefB_II49pvqzxiz3FiwU2QePt-oJQyvWupABUAxFEI2v_Dx9vF-_g1ePhFC2wWjJKdBBZFeTg1fL5l89S-CsJIJnxtelyOeWdKO4frwfIEdLiu7M1UAOltZBZkaPyutMYQeG7YVJ1Vvl6vRoCDHsDH8lhUXFfhYA7KgkzAqlsf8CxXQ6KThuA6xHwo_XRzcok520T6u2q6zBtxOefQxkeEUDCjrHZL26pcHBECE2WMb82yO6PzyYPePogEo288nyWjNhJOc5tRQ0K8F9nEXR0KlivOzQ2t_AoItcOMUEBv5eJRvu13YUvENjaZgUo3U6xAUqIjGQvyquOs2PCJMSYVRs1YlllX53buw4WpENLlt_SQyZoMOdrQ84kBOLNf_HxFUOU493kZ32Q7C7E8aUNDxqJ9RU5do1b7qu5Hf1BGYHl7dVdc4bazT0ZnxHuS4JOX2tUJTac5UVH_nnlk1y9o9Z1moU3MfIl0L-_dPr4w_KKMuq7bUZrE6kK1j-JKZOgjd5XwzakwTxrUY7kAXHPSpQ5hxjz_m4-K6JajX0dK4CmALiLmKapyPxkJu46R1nb5zVpstacJMdaDIdYzhi3MQFV_wlGwKpuzoycm2WySNQDWwbFucZJfZKf2XxqfPD6xlXm4gBD5HuSS2_v8DlEpoEAPxK23kbbXeZMcdF-7E6M0KosEjwatYeQqOBTLZIfvsOct5C-mdbpSvoRAz0Xlkf-lXrN_04SJj69fLYVofJ6Epwl3SUbK1N_KtICMrZl0uztlQNchkd0LFnEGj9onerrXVBpuMPajFe7Uj0OSQTorjnGGiOTphzLqBy190g-66CXbtx2o7dUuDRIHvVxvYUueMAfqp81Ox-IvQ9QnN0JVeu-70NoKMh45lIcA98z7yANweRL8dyNgrsve2jUYVYGXCJT1brFuZCZsECvA8y0yKfoP4pFcky38sHBYm66J0o6KdoASZ1ithK040-3Wp9zFNBLUooKutoHDd42CTBVKfMDOm4aMLTjWjuSs0IjhrYtJwi49nLn7XD8GhCUobWnZp7invsrKgdj9xAhSXFlM3lhXBBrhPvMTEvB2_B7GETR-ACw5leLqg4VbDw1TAJ34UmsGET4f4ivn-omamC9z3-sz6amAKjW4f_2PQlb_8QzQN8jXOG84LNJmNZUOQxVReL0xtnExawsLzTPaHD6aiBOVp0oVReG9W9_FInhNVLNSumqr5zbMc62bHpNh7SC0IeBmbJ_cxQSGivIMjclS49pKv11zLXaptQzapz78bi_WIjiCK_eihRW6LepCdRGtuTCDotOijYG2ToEqi4gjDSMsGpjHzFFIx6CxL2MDmZq9yMj5rAjtmmQ2-9PcRvdUDgd_W-I4aYdrS35c70LxSVzDXzG6ZkckrsZBvHFC7CAUL2aYPPqA2BQrkYG08ZI9GJ1w0BfgiE6Yyb_WEKf7aa5aLN-9BmGwYM0Z0RLLeBdc4DaYYjfAMGldkxbd7Eol_oen_BzHTcBy2lB7fgU4xWImtIlN1QoqcBeasjxT1Zn1eWRcmaaAvCL7NFOor-OZsdXEEYX6uFJOKhaKzIvEtdYqcR5_uXVuiQG1HWibjlImb3ZoudTAiQgnPiKQgkVrUA-U0Rg9yB8FT5QGb1l6kRz71_lYumuEi7-5N9p5QV4UPH5McRMN8QPq72NqiOB9NwYwekQHy-gbZSkPgPnDKlYqRDmf4Dx6R-Uq0dPSfIyuFxYtWHWIEqcFcIvfOuf2DLA_QIPDdPSyJcuPo3s601gpHkAQFcLUcGaqX-t-T8aoFdWKwhY56oE8DeekAOdUPnyNFr69M-ItYy8QTAqMaQ8dWK-xqXzTXmEC2BymuMJ12IAPYQ6mRO9ZyMEoxlNBRp7sFbB-IaUdNhspp5LUY59VO6SM5d4Sg5qgDcfunN9VzAnJnQukVi3OLP3EX1nl1SnmupOwFVFcZ6gn4R_38qaDjBnWkqroU6oqRz3reL8kzjR0Hn8WtmB1hkD2HJowfo7t-Im74fku4li6HCrffTfQYhg4XfqTfNdd2uIM2ofEu0HtASJidc6BRWO__HntB4oaKZCGjRyuZRCUyp7ZeH9ny4VBaHKR-eyx1_r-aG4xozrghVGjR7NORX6zcD49Z95n0qbDwI8pU51VoiBSpClrY09Y6UIC8j12xVbtcyjyOvtiPxOpfPOkJpFfuyDOcVgf0JZ6kYJAyyvv-StE7m-lQruwjDI888P4hWDWyBETSHkhXHCfN0k6snd6Fz-90lPjYASJlYIbHn6cVm44zMgvmvxLlNGpHOxvEY62y7T4BTLQebUozX7FYY1k8UJmXKj6aTz9R0kjzIL6h1vL3Eh1O9YJ-joTdgLZI0cEabS-fWAJp__DpLyiO8O__NzoV4_cA0GC36pH-mStyK9iuKgKWvjkpu8r4cK-Adie6z51nYC0Zqvbyxckm7kNY32OwfTEtVx-EgLX1RlCgInr4tyivBbPBt_xCm1u3wmediWCqxzB-EmEanzPsOh6LxjhyFt8MO28LkMHL6-V6nvl5ATCLph_fRcnS0e48xdHHRSwF_Wp3fir98l5jZlst59dVyguIeWwRQgFhiODibsAY2gOcaLRBokOOSv_UChjjjc_73vClS09pfQ4SrP5Jv4LR2_X_rByP-ZY7mwREKjadOzZJDU3WcvNJZlj5XLqf5ibpVmfkCjlN53Z-ABuSFlsKSMy-byk6YZilylCT8nTMTg</div><!--{content_separator}-->
+	<hr/>
+</body>	
+</html>
+
+
+
